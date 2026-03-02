@@ -1,5 +1,6 @@
 const MENU_ID = "toggle-enable";
 const FLOAT_MENU_ID = "toggle-float";
+const GUIDE_MENU_ID = "open-guide";
 
 const DEFAULT_SETTINGS = {
   isPaused: false,
@@ -37,8 +38,11 @@ async function setTabState(tabId, state) {
   await chrome.storage.local.set({ [`tabState_${tabId}`]: state });
 }
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
   initializeExtension(false, false);
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: chrome.runtime.getURL('guide.html') });
+  }
 });
 
 chrome.runtime.onStartup.addListener(() => {
@@ -71,6 +75,11 @@ function initializeExtension(isEnabled, isFloating) {
     chrome.contextMenus.create({
       id: FLOAT_MENU_ID,
       title: isFloating ? "Hide Floating Controls" : "Show Floating Controls",
+      contexts: ["action", "page"]
+    });
+    chrome.contextMenus.create({
+      id: GUIDE_MENU_ID,
+      title: "View Operational Manual",
       contexts: ["action", "page"]
     });
     updateBadge(isEnabled);
@@ -120,10 +129,18 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         action: "floatChanged", 
         isFloating: state.isFloating 
     }).catch(() => {});
+  } else if (info.menuItemId === GUIDE_MENU_ID) {
+    chrome.tabs.create({ url: chrome.runtime.getURL('guide.html') });
   }
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // SECURITY: Strict Origin Validation
+  if (sender.id !== chrome.runtime.id) {
+    console.error("Unauthorized message origin detected:", sender.id);
+    return false;
+  }
+
   const tabId = sender.tab ? sender.tab.id : request.tabId;
   
   if (request.action === "openPopup") {

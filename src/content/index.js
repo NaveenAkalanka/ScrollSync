@@ -22,6 +22,12 @@ const ICONS = {
     close: `<svg viewBox="0 0 256 256" width="16" height="16"><path fill="currentColor" d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>`
 };
 
+// Create a persistent Shadow Root for all UI elements
+const shadowHost = document.createElement('div');
+shadowHost.id = 'scrollsync-root';
+shadowHost.style.cssText = 'position: fixed; z-index: 2147483647; pointer-events: none; top: 0; left: 0; width: 100%; height: 100%;';
+const shadowRoot = shadowHost.attachShadow({ mode: 'closed' }); // 'closed' prevents host JS from accessing it
+
 // Safety wrapper for extension communication
 function safeSendMessage(message, callback) {
     try {
@@ -51,6 +57,7 @@ function handleInvalidContext() {
         floatingIcon.remove();
         floatingIcon = null;
     }
+    if (shadowHost.parentNode) shadowHost.remove();
     console.warn("[ScrollSync] Extension context invalidated. Script execution stopped. Please refresh the page.");
 }
 
@@ -80,7 +87,7 @@ function showVisualFeedback(x, y) {
     if (!isEnabled) return;
     const dot = document.createElement('div');
     dot.style.cssText = `position: fixed; left: ${x - 5}px; top: ${y - 5}px; width: 10px; height: 10px; background: #00f0ff; border-radius: 50%; z-index: 1000000; pointer-events: none; transition: transform 0.4s, opacity 0.4s; box-shadow: 0 0 15px #00f0ff;`;
-    document.body.appendChild(dot);
+    shadowRoot.appendChild(dot);
     setTimeout(() => { dot.style.transform = 'scale(4)'; dot.style.opacity = '0'; setTimeout(() => dot.remove(), 400); }, 10);
 }
 
@@ -231,7 +238,7 @@ class FloatingIcon {
             box-shadow: 0 0 15px rgba(0,240,255,0.4);
             border: 2px solid #00f0ff;
             clip-path: polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%);
-            user-select: none; transition: transform 0.2s;
+            user-select: none; transition: transform 0.2s; pointer-events: auto;
         `;
 
         this.logoImg = document.createElement('img');
@@ -251,7 +258,11 @@ class FloatingIcon {
         this.container.addEventListener('mousedown', (e) => this.onDragStart(e));
         this.container.addEventListener('click', (e) => this.onClick(e));
         this.container.addEventListener('contextmenu', (e) => { e.preventDefault(); if (!this.dragged) this.toggleMenu(); });
-        document.body.appendChild(this.container);
+        
+        // Ensure shadow root is attached to DOM
+        if (!shadowHost.parentNode) document.body.appendChild(shadowHost);
+        shadowRoot.appendChild(this.container);
+
         window.addEventListener('mousemove', (e) => this.onDrag(e));
         window.addEventListener('mouseup', () => this.onDragEnd());
         this.createMenu();
@@ -263,9 +274,11 @@ class FloatingIcon {
             { id: 'power', icon: ICONS.power, color: '#ff003c', action: () => this.toggleEnable() },
             { id: 'guide', icon: ICONS.info, color: '#ffffff', action: () => safeSendMessage({ action: "openGuide" }) }
         ];
+        const parser = new DOMParser();
         actions.forEach((item, index) => {
             const btn = document.createElement('div');
-            btn.innerHTML = item.icon;
+            const iconDoc = parser.parseFromString(item.icon, 'image/svg+xml');
+            btn.appendChild(iconDoc.documentElement);
             btn.style.cssText = `position: absolute; width: 32px; height: 32px; background: #050a0e; border: 1px solid ${item.color}; display: flex; align-items: center; justify-content: center; color: ${item.color}; border-radius: 50%; cursor: pointer; pointer-events: auto; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(0); opacity: 0; top: 8px; left: 8px; box-shadow: 0 0 10px ${item.color}44;`;
             btn.addEventListener('click', (e) => { e.stopPropagation(); item.action(); });
             this.menu.appendChild(btn);
@@ -299,7 +312,10 @@ class FloatingIcon {
             this.statusLine.style.background = '#00f0ff'; this.container.style.borderColor = '#00f0ff'; this.container.style.boxShadow = '0 0 15px rgba(0,240,255,0.4)'; this.logoImg.style.filter = 'drop-shadow(0 0 5px #00f0ff)';
         }
         if (this.menuButtons[0]) {
-            this.menuButtons[0].el.innerHTML = currentSettings.isPaused ? ICONS.play : ICONS.pause;
+            const parser = new DOMParser();
+            const iconStr = currentSettings.isPaused ? ICONS.play : ICONS.pause;
+            const iconDoc = parser.parseFromString(iconStr, 'image/svg+xml');
+            this.menuButtons[0].el.replaceChildren(iconDoc.documentElement);
             this.menuButtons[0].el.style.borderColor = currentSettings.isPaused ? '#10b981' : '#00f0ff';
             this.menuButtons[0].el.style.color = currentSettings.isPaused ? '#10b981' : '#00f0ff';
         }
@@ -330,7 +346,7 @@ class FloatingIcon {
 let overlayIframe = null;
 function toggleOverlayPanel() {
     if (overlayIframe) {
-        overlayIframe.style.transform = 'translateX(100%)';
+        overlayIframe.style.transform = 'translateX(calc(100% + 40px))';
         setTimeout(() => { overlayIframe.remove(); overlayIframe = null; }, 300);
     } else {
         overlayIframe = document.createElement('iframe');
@@ -340,11 +356,13 @@ function toggleOverlayPanel() {
             width: 320px; height: 550px; border: none;
             z-index: 2147483646; border-radius: 32px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateX(calc(100% + 40px));
             background: transparent;
+            pointer-events: auto;
         `;
-        document.body.appendChild(overlayIframe);
+        if (!shadowHost.parentNode) document.body.appendChild(shadowHost);
+        shadowRoot.appendChild(overlayIframe);
         setTimeout(() => { overlayIframe.style.transform = 'translateX(0)'; }, 10);
     }
 }
@@ -355,11 +373,12 @@ function manageFloatingIcon() {
 }
 
 function showStatusToast(message) {
-    let toast = document.getElementById('scrollsync-status-toast');
+    let toast = shadowRoot.getElementById('scrollsync-status-toast');
     if (!toast) {
         toast = document.createElement('div'); toast.id = 'scrollsync-status-toast';
         toast.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #050a0e; color: #00f0ff; padding: 8px 16px; border: 1px solid #00f0ff; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); z-index: 2147483647; font-family: 'Tomorrow', sans-serif; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 0 10px rgba(0,240,255,0.3);`;
-        document.body.appendChild(toast);
+        if (!shadowHost.parentNode) document.body.appendChild(shadowHost);
+        shadowRoot.appendChild(toast);
     }
     toast.innerText = `>> ${message}`; toast.style.opacity = '1'; toast.style.transform = 'translateX(-50%) translateY(0)';
     clearTimeout(toast.hideTimeout); toast.hideTimeout = setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(-10px)'; }, 1500);
