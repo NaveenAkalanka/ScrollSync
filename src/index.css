@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --anime-pink: #ff4d85;
+  --anime-purple: #7b61ff;
+  --anime-bg: #fdf2f8;
+  --anime-card: #ffffff;
+  --anime-text-heading: #1e293b;
+  --anime-text-body: #475569;
+  --status-active: #10b981;
+  --status-alert: #f43f5e;
+}
+
+@layer base {
+  html {
+    background-color: transparent;
+  }
+  body {
+    @apply font-['Nunito'] min-h-[550px] text-slate-600 antialiased;
+    background-color: var(--anime-bg);
+  }
+}
+
+/* Glassmorphism Effect */
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-white/40 shadow-xl;
+}
+
+/* Custom Scrollbar (Kawaii Style) */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+  background: linear-gradient(var(--anime-pink), var(--anime-purple)); 
+  border-radius: 10px;
+}
+
+/* Kawaii Tab Button */
+.kawaii-tab {
+  @apply flex-1 flex flex-col items-center py-3 gap-1 text-[10px] font-black uppercase tracking-wider transition-all duration-300 relative text-slate-400;
+}
+
+.kawaii-tab.active {
+  @apply text-white scale-105;
+  background: linear-gradient(135deg, var(--anime-pink), var(--anime-purple));
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(255, 77, 133, 0.3);
+}
+
+.kawaii-tab:not(.active):hover {
+  @apply bg-pink-50 text-pink-400;
+  border-radius: 20px;
+}
+
+/* Kawaii Toggle */
+.kawaii-switch {
+  @apply relative inline-block w-11 h-6;
+}
+
+.kawaii-switch input { @apply opacity-0 w-0 h-0; }
+
+.kawaii-slider {
+  @apply absolute cursor-pointer inset-0 transition-all duration-300 rounded-full bg-slate-200 border-2 border-white;
+}
+
+.kawaii-slider:before {
+  @apply absolute content-[""] h-4 w-4 left-[2px] bottom-[2px] transition-all duration-300 bg-white rounded-full shadow-md;
+}
+
+input:checked + .kawaii-slider {
+  background: linear-gradient(135deg, var(--anime-pink), var(--anime-purple));
+  box-shadow: 0 0 10px rgba(255, 77, 133, 0.3);
+}
+
+input:checked + .kawaii-slider:before {
+  @apply translate-x-5;
+}
+
+/* Kawaii Range */
+.kawaii-range {
+  @apply w-full h-2 bg-slate-100 appearance-none outline-none rounded-full border border-white;
+}
+
+.kawaii-range::-webkit-slider-thumb {
+  @apply appearance-none w-5 h-5 cursor-pointer transition-all duration-200 bg-white border-2 border-pink-400 rounded-full shadow-lg;
+}
+
+.kawaii-range::-webkit-slider-thumb:hover {
+  @apply scale-110;
+}
+
+/* Kawaii Button */
+.kawaii-btn {
+  @apply px-4 py-2 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 border-2 border-transparent;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.kawaii-btn.active {
+  @apply bg-white border-pink-400 text-pink-500 shadow-sm;
+}
+
+.kawaii-btn:hover:not(.active) {
+  @apply bg-pink-50 text-pink-400;
+}
+
+/* Main Container Frame */
+.sticker-frame {
+  @apply border-[6px] border-white shadow-2xl rounded-[32px] overflow-hidden;
+}
+
+/* Background Decor Circles */
+.bg-decor {
+  @apply absolute -z-10 rounded-full blur-[80px] opacity-20;
+}
+
+/* Morphing Button (Kawaii Style) */
+.morph-btn-kawaii {
+  @apply w-14 h-14 flex items-center justify-center cursor-pointer transition-all duration-300 rounded-full shadow-lg border-4 border-white;
+  background: linear-gradient(135deg, var(--anime-pink), var(--anime-purple));
+}
+
+.morph-btn-kawaii:hover { @apply scale-110 -rotate-6 shadow-xl; }
+
+.morph-btn-kawaii.is-paused {
+  background: linear-gradient(135deg, #f43f5e, #fb7185);
+}
+
+.morph-icon-kawaii {
+  @apply text-white transition-all duration-300 flex items-center justify-center;
+}
