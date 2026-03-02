@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScrollSync.OS // Operational Manual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyber-cyan: #00f0ff;
+            --cyber-yellow: #fcee0a;
+            --cyber-red: #ff003c;
+            --cyber-bg: #050a0e;
+            --cyber-surface: #0a1118;
+            --cyber-border: #0f172a;
+            --cyber-text-dim: #445b74;
+        }
+
+        body {
+            background-color: var(--cyber-bg);
+            color: #fff;
+            font-family: 'Tomorrow', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid var(--cyber-cyan);
+            padding: 50px;
+            position: relative;
+            background: rgba(0, 240, 255, 0.02);
+            clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);
+        }
+
+        header {
+            border-bottom: 2px solid var(--cyber-cyan);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .version {
+            color: var(--cyber-text-dim);
+            font-weight: bold;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            color: var(--cyber-yellow);
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: ">>";
+            color: var(--cyber-cyan);
+        }
+
+        h3 {
+            color: var(--cyber-cyan);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-top: 25px;
+            border-left: 3px solid var(--cyber-cyan);
+            padding-left: 10px;
+        }
+
+        p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        strong {
+            color: var(--cyber-cyan);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-cols: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: var(--cyber-surface);
+            border: 1px solid var(--cyber-border);
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--cyber-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+
+        .mode-badge {
+            display: inline-block;
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--cyber-cyan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            border: 1px solid var(--cyber-cyan);
+        }
+
+        .key-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        .key-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .key {
+            background: var(--cyber-cyan);
+            color: #000;
+            padding: 1px 6px;
+            font-weight: 900;
+            border-radius: 3px;
+            min-width: 50px;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--cyber-text-dim);
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--cyber-text-dim);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .scanlines::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.05;
+        }
+    </style>
+</head>
+<body class="scanlines">
+    <div class="container">
+        <header>
+            <h1>ScrollSync.OS // Operational Manual</h1>
+            <span class="version">CORE_V1.0.0</span>
+        </header>
+        
+        <p>System established. ScrollSync is a precision automated navigation suite designed for deep-data immersion and accessibility. Follow the protocols below to calibrate your interface.</p>
+
+        <h2>Section 01 // Core Initialization</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="mode-badge">Global State</div>
+                <p>The <strong>Power Toggle</strong> in the header links the extension to the current tab. Without this link, all automated protocols remain offline.</p>
+                <p>Settings are <strong>Tab-Specific</strong> and persist across page loads and domain jumps until the tab is closed.</p>
+            </div>
+            <div class="card">
+                <div class="mode-badge">Execution Control</div>
+                <p>Use the <strong>Core Halt (Pause)</strong> button in the footer to temporarily suspend all active movements. This is essential for reading stationary text or static data.</p>
+                <div class="stat-line"><span>HALT_STATUS:</span> <span>STABLE</span></div>
+            </div>
+        </div>
+
+        <h2>Section 02 // Navigation Modules</h2>
+        
+        <h3>Vert & Horz Glide</h3>
+        <p>Provides constant, linear movement along the specified axis. The system uses <strong>Intelligent Container Detection</strong> to automatically find the primary scrollable element on the page (even within nested frames).</p>
+        <ul>
+            <li><strong>Velocity:</strong> Adjustable from 0 to 500 PX/S.</li>
+            <li><strong>Detection:</strong> Prioritizes <code>document.scrollingElement</code> before scanning for overflow containers.</li>
+        </ul>
+
+        <h3>Smart Pulse (Auto-Clicker)</h3>
+        <p>Designed for image galleries, manga readers, and presentation decks. The system simulates human interaction at a fixed frequency.</p>
+        <ul>
+            <li><strong>Logic:</strong> Scans the DOM for the most prominent <code>img</code> or <code>canvas</code> element to determine the click target.</li>
+            <li><strong>Positioning:</strong> Choose <strong>LEFT</strong>, <strong>CENTER</strong>, or <strong>RIGHT</strong> based on the site's navigation layout.</li>
+            <li><strong>Interval:</strong> Adjustable pulse frequency (1 to 60 seconds).</li>
+        </ul>
+
+        <h2>Section 03 // Haptic Interface (Gamepad)</h2>
+        <p>The extension supports direct <strong>Gamepad API Polling</strong> for a console-like browsing experience. Once linked, the following mappings apply:</p>
+        <div class="grid">
+            <div class="card">
+                <div class="mode-badge">Analog Mapping</div>
+                <p>Map the <strong>LEFT</strong> or <strong>RIGHT</strong> analog stick to control scrolling speed dynamically based on tilt intensity.</p>
+            </div>
+            <div class="card">
+                <div class="mode-badge">Trigger Actions</div>
+                <p>The <strong>A Button</strong> (or Bottom Face Button) and <strong>Right Trigger</strong> are mapped to trigger an immediate Smart Click pulse.</p>
+            </div>
+        </div>
+
+        <h2>Section 04 // UI Overlay & Floating Controls</h2>
+        <p>Toggle <strong>FLOAT_ON</strong> to project a persistent control interface onto the page surface. This allows for manipulation without opening the extension popup.</p>
+        <ul>
+            <li><strong>Interaction:</strong> Left-Click to drag the icon. Context-Click (Right-Click) to expand the radial menu.</li>
+            <li><strong>Visual Feedback:</strong> A glowing ring indicates system status: 
+                <span style="color: var(--cyber-cyan)">Cyan (Active)</span>, 
+                <span style="color: var(--cyber-red)">Red (Halted)</span>, 
+                <span style="color: var(--cyber-text-dim)">Gray (Offline)</span>.
+            </li>
+        </ul>
+
+        <h2>Section 05 // Shortcut Protocol</h2>
+        <div class="key-list">
+            <div class="key-item"><span class="key">SPACE</span> Toggle Core Halt (Pause/Resume)</div>
+            <div class="key-item"><span class="key">W / S</span> Adjust Active Velocity (Inc/Dec)</div>
+            <div class="key-item"><span class="key">A / D</span> Manual Jump (Navigate Back/Forward)</div>
+        </div>
+
+        <div class="footer">
+            // NEURAL_LINK_ESTABLISHED // DATA_FLOW_OPTIMIZED // NO_ERROR_DETECTED //
+        </div>
+    </div>
+</body>
+</html>

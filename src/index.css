@@ -1,134 +1,148 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&family=Orbitron:wght@400;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --anime-pink: #ff4d85;
-  --anime-purple: #7b61ff;
-  --anime-bg: #fdf2f8;
-  --anime-card: #ffffff;
-  --anime-text-heading: #1e293b;
-  --anime-text-body: #475569;
-  --status-active: #10b981;
-  --status-alert: #f43f5e;
+  --cyber-yellow: #fcee0a;
+  --cyber-cyan: #00f0ff;
+  --cyber-red: #ff003c;
+  --cyber-bg: #050a0e;
 }
 
 @layer base {
   html {
-    background-color: transparent;
+    background-color: var(--cyber-bg);
   }
   body {
-    @apply font-['Nunito'] min-h-[550px] text-slate-600 antialiased;
-    background-color: var(--anime-bg);
+    @apply font-['Tomorrow'] min-h-[500px];
+    background-color: var(--cyber-bg);
+    color: #fff;
   }
 }
 
-/* Glassmorphism Effect */
-.glass-card {
-  @apply bg-white/80 backdrop-blur-md border border-white/40 shadow-xl;
+/* Custom Scrollbar (Cyberpunk Style) */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0a1118; }
+::-webkit-scrollbar-thumb { background: var(--cyber-cyan); box-shadow: 0 0 5px var(--cyber-cyan); }
+
+/* Scanline Effect */
+.scanlines::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.3;
 }
 
-/* Custom Scrollbar (Kawaii Style) */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { 
-  background: linear-gradient(var(--anime-pink), var(--anime-purple)); 
-  border-radius: 10px;
+/* Cyber Button */
+.cyber-btn {
+  @apply relative overflow-hidden font-bold uppercase transition-all duration-200;
+  clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+  border: 1px solid var(--cyber-cyan);
+  background: rgba(0, 240, 255, 0.05);
+  color: var(--cyber-cyan);
 }
 
-/* Kawaii Tab Button */
-.kawaii-tab {
-  @apply flex-1 flex flex-col items-center py-3 gap-1 text-[10px] font-black uppercase tracking-wider transition-all duration-300 relative text-slate-400;
+.cyber-btn:hover {
+  background: var(--cyber-cyan);
+  color: #000;
+  box-shadow: 0 0 15px var(--cyber-cyan);
 }
 
-.kawaii-tab.active {
-  @apply text-white scale-105;
-  background: linear-gradient(135deg, var(--anime-pink), var(--anime-purple));
-  border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(255, 77, 133, 0.3);
+.cyber-btn.active {
+  background: var(--cyber-cyan);
+  color: #000;
 }
 
-.kawaii-tab:not(.active):hover {
-  @apply bg-pink-50 text-pink-400;
-  border-radius: 20px;
+/* Cyber Switch */
+.cyber-switch {
+  @apply relative inline-block w-10 h-5;
 }
 
-/* Kawaii Toggle */
-.kawaii-switch {
-  @apply relative inline-block w-11 h-6;
+.cyber-switch input { @apply opacity-0 w-0 h-0; }
+
+.cyber-slider {
+  @apply absolute cursor-pointer inset-0 transition-all duration-300;
+  background: #111a24;
+  clip-path: polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%);
+  border: 1px solid #223447;
 }
 
-.kawaii-switch input { @apply opacity-0 w-0 h-0; }
-
-.kawaii-slider {
-  @apply absolute cursor-pointer inset-0 transition-all duration-300 rounded-full bg-slate-200 border-2 border-white;
+.cyber-slider:before {
+  @apply absolute content-[""] h-3 w-3 left-1 bottom-1 transition-all duration-300;
+  background: #445b74;
+  clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
 }
 
-.kawaii-slider:before {
-  @apply absolute content-[""] h-4 w-4 left-[2px] bottom-[2px] transition-all duration-300 bg-white rounded-full shadow-md;
+input:checked + .cyber-slider {
+  border-color: var(--cyber-cyan);
+  box-shadow: 0 0 5px var(--cyber-cyan);
 }
 
-input:checked + .kawaii-slider {
-  background: linear-gradient(135deg, var(--anime-pink), var(--anime-purple));
-  box-shadow: 0 0 10px rgba(255, 77, 133, 0.3);
+input:checked + .cyber-slider:before {
+  @apply translate-x-4;
+  background: var(--cyber-cyan);
+  box-shadow: 0 0 8px var(--cyber-cyan);
 }
 
-input:checked + .kawaii-slider:before {
-  @apply translate-x-5;
+/* Cyber Tab */
+.cyber-tab {
+  @apply flex-1 flex flex-col items-center py-2 gap-1 text-[9px] font-bold uppercase transition-all duration-300 border-t-2 border-transparent;
+  background: rgba(255, 255, 255, 0.02);
 }
 
-/* Kawaii Range */
-.kawaii-range {
-  @apply w-full h-2 bg-slate-100 appearance-none outline-none rounded-full border border-white;
+.cyber-tab.active {
+  background: rgba(0, 240, 255, 0.1);
+  border-top-color: var(--cyber-cyan);
+  color: var(--cyber-cyan);
+  text-shadow: 0 0 5px var(--cyber-cyan);
 }
 
-.kawaii-range::-webkit-slider-thumb {
-  @apply appearance-none w-5 h-5 cursor-pointer transition-all duration-200 bg-white border-2 border-pink-400 rounded-full shadow-lg;
+/* Cyber Range */
+.cyber-range {
+  @apply w-full h-1 bg-[#111a24] appearance-none outline-none;
 }
 
-.kawaii-range::-webkit-slider-thumb:hover {
-  @apply scale-110;
+.cyber-range::-webkit-slider-thumb {
+  @apply appearance-none w-3 h-3 cursor-pointer transition-all duration-200;
+  background: var(--cyber-cyan);
+  clip-path: polygon(25% 0, 100% 0, 100% 75%, 75% 100%, 0 100%, 0 25%);
+  box-shadow: 0 0 10px var(--cyber-cyan);
 }
 
-/* Kawaii Button */
-.kawaii-btn {
-  @apply px-4 py-2 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 border-2 border-transparent;
-  background: #f8fafc;
-  color: #64748b;
+.cyber-range::-webkit-slider-thumb:hover {
+  @apply scale-125;
 }
 
-.kawaii-btn.active {
-  @apply bg-white border-pink-400 text-pink-500 shadow-sm;
+/* Morphing Button (Cyber Style) */
+.morph-btn-cyber {
+  @apply w-12 h-12 flex items-center justify-center cursor-pointer transition-all duration-300;
+  background: var(--cyber-cyan);
+  clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
 }
 
-.kawaii-btn:hover:not(.active) {
-  @apply bg-pink-50 text-pink-400;
+.morph-btn-cyber:hover { @apply scale-110; }
+
+.morph-btn-cyber.is-paused {
+  background: var(--cyber-red);
+  box-shadow: 0 0 15px rgba(255, 0, 60, 0.5);
 }
 
-/* Main Container Frame */
-.sticker-frame {
-  @apply border-[6px] border-white shadow-2xl rounded-[32px] overflow-hidden;
+.morph-icon-cyber {
+  @apply w-5 h-5 bg-black transition-all duration-300;
 }
 
-/* Background Decor Circles */
-.bg-decor {
-  @apply absolute -z-10 rounded-full blur-[80px] opacity-20;
+.morph-icon-cyber.play {
+  clip-path: polygon(20% 0%, 20% 100%, 100% 50%);
 }
 
-/* Morphing Button (Kawaii Style) */
-.morph-btn-kawaii {
-  @apply w-14 h-14 flex items-center justify-center cursor-pointer transition-all duration-300 rounded-full shadow-lg border-4 border-white;
-  background: linear-gradient(135deg, var(--anime-pink), var(--anime-purple));
-}
-
-.morph-btn-kawaii:hover { @apply scale-110 -rotate-6 shadow-xl; }
-
-.morph-btn-kawaii.is-paused {
-  background: linear-gradient(135deg, #f43f5e, #fb7185);
-}
-
-.morph-icon-kawaii {
-  @apply text-white transition-all duration-300 flex items-center justify-center;
+.morph-icon-cyber.pause {
+  clip-path: polygon(0% 0%, 0% 100%, 35% 100%, 35% 0%, 65% 0%, 65% 100%, 100% 100%, 100% 0%);
 }

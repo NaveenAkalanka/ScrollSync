@@ -79,7 +79,7 @@ function getScrollableElement(axis = 'vertical') {
 function showVisualFeedback(x, y) {
     if (!isEnabled) return;
     const dot = document.createElement('div');
-    dot.style.cssText = `position: fixed; left: ${x - 5}px; top: ${y - 5}px; width: 10px; height: 10px; background: #7b61ff; border-radius: 50%; z-index: 1000000; pointer-events: none; transition: transform 0.4s, opacity 0.4s; box-shadow: 0 0 15px #7b61ff; border: 2px solid white;`;
+    dot.style.cssText = `position: fixed; left: ${x - 5}px; top: ${y - 5}px; width: 10px; height: 10px; background: #00f0ff; border-radius: 50%; z-index: 1000000; pointer-events: none; transition: transform 0.4s, opacity 0.4s; box-shadow: 0 0 15px #00f0ff;`;
     document.body.appendChild(dot);
     setTimeout(() => { dot.style.transform = 'scale(4)'; dot.style.opacity = '0'; setTimeout(() => dot.remove(), 400); }, 10);
 }
@@ -225,23 +225,23 @@ class FloatingIcon {
     init() {
         this.container.style.cssText = `
             position: fixed; left: ${this.posX}px; top: ${this.posY}px;
-            width: 56px; height: 56px; background: #ffffff;
+            width: 48px; height: 48px; background: #050a0e;
             display: flex; align-items: center; justify-content: center;
             cursor: move; z-index: 2147483647;
-            box-shadow: 0 10px 25px rgba(255, 77, 133, 0.2);
-            border: 3px solid #ff4d85;
-            border-radius: 50%;
-            user-select: none; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(0,240,255,0.4);
+            border: 2px solid #00f0ff;
+            clip-path: polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%);
+            user-select: none; transition: transform 0.2s;
         `;
 
         this.logoImg = document.createElement('img');
         this.logoImg.src = chrome.runtime.getURL('icon.png');
-        this.logoImg.style.cssText = `width: 32px; height: 32px; pointer-events: none; transition: filter 0.3s;`;
+        this.logoImg.style.cssText = `width: 28px; height: 28px; pointer-events: none; filter: drop-shadow(0 0 5px #00f0ff);`;
         this.container.appendChild(this.logoImg);
 
-        this.statusBadge = document.createElement('div');
-        this.statusBadge.style.cssText = `position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; background: #ff4d85; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);`;
-        this.container.appendChild(this.statusBadge);
+        this.statusLine = document.createElement('div');
+        this.statusLine.style.cssText = `position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: #00f0ff;`;
+        this.container.appendChild(this.statusLine);
 
         this.menu = document.createElement('div');
         this.menu.style.cssText = `position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;`;
@@ -259,14 +259,14 @@ class FloatingIcon {
 
     createMenu() {
         const actions = [
-            { id: 'pause', icon: ICONS.pause, color: '#ff4d85', action: () => this.togglePause() },
-            { id: 'power', icon: ICONS.power, color: '#7b61ff', action: () => this.toggleEnable() },
-            { id: 'guide', icon: ICONS.info, color: '#475569', action: () => safeSendMessage({ action: "openGuide" }) }
+            { id: 'pause', icon: ICONS.pause, color: '#00f0ff', action: () => this.togglePause() },
+            { id: 'power', icon: ICONS.power, color: '#ff003c', action: () => this.toggleEnable() },
+            { id: 'guide', icon: ICONS.info, color: '#ffffff', action: () => safeSendMessage({ action: "openGuide" }) }
         ];
         actions.forEach((item, index) => {
             const btn = document.createElement('div');
             btn.innerHTML = item.icon;
-            btn.style.cssText = `position: absolute; width: 36px; height: 36px; background: #ffffff; border: 2px solid ${item.color}; display: flex; align-items: center; justify-content: center; color: ${item.color}; border-radius: 50%; cursor: pointer; pointer-events: auto; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(0); opacity: 0; top: 10px; left: 10px; shadow: 0 4px 10px rgba(0,0,0,0.1);`;
+            btn.style.cssText = `position: absolute; width: 32px; height: 32px; background: #050a0e; border: 1px solid ${item.color}; display: flex; align-items: center; justify-content: center; color: ${item.color}; border-radius: 50%; cursor: pointer; pointer-events: auto; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(0); opacity: 0; top: 8px; left: 8px; box-shadow: 0 0 10px ${item.color}44;`;
             btn.addEventListener('click', (e) => { e.stopPropagation(); item.action(); });
             this.menu.appendChild(btn);
             this.menuButtons.push({ el: btn, angle: (index * 120) - 150 });
@@ -277,7 +277,7 @@ class FloatingIcon {
         this.isExpanded = !this.isExpanded;
         this.menuButtons.forEach((btn) => {
             if (this.isExpanded) {
-                const dist = 70;
+                const dist = 60;
                 const x = Math.cos(btn.angle * Math.PI / 180) * dist;
                 const y = Math.sin(btn.angle * Math.PI / 180) * dist;
                 btn.el.style.transform = `translate(${x}px, ${y}px) scale(1)`;
@@ -287,30 +287,21 @@ class FloatingIcon {
                 btn.el.style.opacity = '0';
             }
         });
-        this.container.style.transform = this.isExpanded ? 'scale(1.1) rotate(10deg)' : 'scale(1)';
+        this.container.style.transform = this.isExpanded ? 'scale(1.1)' : 'scale(1)';
     }
 
     updateIcon() {
         if (!isEnabled) {
-            this.statusBadge.style.background = '#cbd5e0'; 
-            this.container.style.borderColor = '#cbd5e0'; 
-            this.container.style.boxShadow = 'none'; 
-            this.logoImg.style.filter = 'grayscale(1) opacity(0.5)';
+            this.statusLine.style.background = '#445b74'; this.container.style.borderColor = '#445b74'; this.container.style.boxShadow = 'none'; this.logoImg.style.filter = 'grayscale(1) opacity(0.5)';
         } else if (currentSettings.isPaused) {
-            this.statusBadge.style.background = '#f43f5e'; 
-            this.container.style.borderColor = '#f43f5e'; 
-            this.container.style.boxShadow = '0 10px 25px rgba(244, 63, 94, 0.2)'; 
-            this.logoImg.style.filter = 'grayscale(0.5) opacity(0.8)';
+            this.statusLine.style.background = '#ff003c'; this.container.style.borderColor = '#ff003c'; this.container.style.boxShadow = '0 0 15px rgba(255,0,60,0.4)'; this.logoImg.style.filter = 'grayscale(1) drop-shadow(0 0 5px #ff003c)';
         } else {
-            this.statusBadge.style.background = '#10b981'; 
-            this.container.style.borderColor = '#ff4d85'; 
-            this.container.style.boxShadow = '0 10px 25px rgba(255, 77, 133, 0.2)'; 
-            this.logoImg.style.filter = 'none';
+            this.statusLine.style.background = '#00f0ff'; this.container.style.borderColor = '#00f0ff'; this.container.style.boxShadow = '0 0 15px rgba(0,240,255,0.4)'; this.logoImg.style.filter = 'drop-shadow(0 0 5px #00f0ff)';
         }
         if (this.menuButtons[0]) {
             this.menuButtons[0].el.innerHTML = currentSettings.isPaused ? ICONS.play : ICONS.pause;
-            this.menuButtons[0].el.style.borderColor = currentSettings.isPaused ? '#10b981' : '#ff4d85';
-            this.menuButtons[0].el.style.color = currentSettings.isPaused ? '#10b981' : '#ff4d85';
+            this.menuButtons[0].el.style.borderColor = currentSettings.isPaused ? '#10b981' : '#00f0ff';
+            this.menuButtons[0].el.style.color = currentSettings.isPaused ? '#10b981' : '#00f0ff';
         }
     }
 
@@ -329,7 +320,7 @@ class FloatingIcon {
     }
 
     onDragStart(e) { this.isDragging = false; this.dragged = false; this.startX = e.clientX - this.posX; this.startY = e.clientY - this.posY; document.body.style.userSelect = 'none'; }
-    onDrag(e) { if (this.startX === 0) return; this.dragged = true; this.isDragging = true; this.posX = Math.min(Math.max(0, e.clientX - this.startX), window.innerWidth - 56); this.posY = Math.min(Math.max(0, e.clientY - this.startY), window.innerHeight - 56); this.container.style.left = `${this.posX}px`; this.container.style.top = `${this.posY}px`; }
+    onDrag(e) { if (this.startX === 0) return; this.dragged = true; this.isDragging = true; this.posX = Math.min(Math.max(0, e.clientX - this.startX), window.innerWidth - 48); this.posY = Math.min(Math.max(0, e.clientY - this.startY), window.innerHeight - 48); this.container.style.left = `${this.posX}px`; this.container.style.top = `${this.posY}px`; }
     onDragEnd() { if (!this.startX) return; this.startX = 0; this.startY = 0; document.body.style.userSelect = ''; setTimeout(() => { this.isDragging = false; }, 50); }
     onClick(e) { if (this.dragged) { this.dragged = false; return; } toggleOverlayPanel(); }
     remove() { if (this.container && this.container.parentNode) { this.container.parentNode.removeChild(this.container); } }
@@ -339,7 +330,7 @@ class FloatingIcon {
 let overlayIframe = null;
 function toggleOverlayPanel() {
     if (overlayIframe) {
-        overlayIframe.style.transform = 'translateX(calc(100% + 40px))';
+        overlayIframe.style.transform = 'translateX(100%)';
         setTimeout(() => { overlayIframe.remove(); overlayIframe = null; }, 300);
     } else {
         overlayIframe = document.createElement('iframe');
@@ -348,8 +339,8 @@ function toggleOverlayPanel() {
             position: fixed; top: 20px; right: 20px;
             width: 320px; height: 550px; border: none;
             z-index: 2147483646; border-radius: 32px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateX(calc(100% + 40px));
             background: transparent;
         `;
@@ -367,11 +358,11 @@ function showStatusToast(message) {
     let toast = document.getElementById('scrollsync-status-toast');
     if (!toast) {
         toast = document.createElement('div'); toast.id = 'scrollsync-status-toast';
-        toast.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #ff4d85, #7b61ff); color: #ffffff; padding: 10px 20px; border-radius: 20px; z-index: 2147483647; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; pointer-events: none; transition: opacity 0.3s, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 20px rgba(255, 77, 133, 0.3); border: 2px solid white;`;
+        toast.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #050a0e; color: #00f0ff; padding: 8px 16px; border: 1px solid #00f0ff; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); z-index: 2147483647; font-family: 'Tomorrow', sans-serif; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 0 10px rgba(0,240,255,0.3);`;
         document.body.appendChild(toast);
     }
-    toast.innerText = message; toast.style.opacity = '1'; toast.style.transform = 'translateX(-50%) translateY(0) scale(1)';
-    clearTimeout(toast.hideTimeout); toast.hideTimeout = setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(-20px) scale(0.9)'; }, 2000);
+    toast.innerText = `>> ${message}`; toast.style.opacity = '1'; toast.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(toast.hideTimeout); toast.hideTimeout = setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(-10px)'; }, 1500);
 }
 
 window.addEventListener('keydown', (e) => {

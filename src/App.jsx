@@ -6,13 +6,10 @@ import {
   GameController, 
   Rewind, 
   FastForward,
-  AppWindow,
-  Sparkle,
+  Cpu,
+  Pulse,
   Info,
-  Monitor,
-  Play,
-  Pause,
-  ArrowRight
+  Monitor
 } from "@phosphor-icons/react";
 
 const App = () => {
@@ -154,213 +151,173 @@ const App = () => {
   const TabButton = ({ id, label, Icon }) => (
     <button 
       onClick={() => isEnabled && changeTab(id)}
-      className={`kawaii-tab ${activeTab === id ? 'active' : ''}`}
+      className={`cyber-tab ${activeTab === id ? 'active' : ''}`}
     >
-      <Icon size={20} weight={activeTab === id ? "fill" : "bold"} />
+      <Icon size={18} weight={activeTab === id ? "fill" : "bold"} />
       <span>{label}</span>
     </button>
   );
 
   const Toggle = ({ checked, onChange }) => (
-    <label className="kawaii-switch">
+    <label className="cyber-switch">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-      <span className="kawaii-slider"></span>
+      <span className="cyber-slider"></span>
     </label>
   );
 
   return (
-    <div className="w-[320px] min-h-[550px] sticker-frame bg-[#fdf2f8] flex flex-col relative overflow-hidden select-none">
-      {/* Background Decor */}
-      <div className="bg-decor w-64 h-64 -top-20 -left-20 bg-pink-400" />
-      <div className="bg-decor w-64 h-64 -bottom-20 -right-20 bg-indigo-400" />
-
+    <div className="w-[300px] bg-[#050a0e] min-h-[500px] flex flex-col overflow-hidden select-none relative scanlines border-x border-[#0f172a]">
+      {/* Glitchy Top Bar */}
+      <div className="bg-[#fcee0a] h-1 w-full" />
+      
       {/* Header */}
-      <div className="px-6 py-4 flex justify-between items-center z-10">
+      <div className="px-4 py-3 flex justify-between items-center border-b border-[#0f172a]">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-white rounded-xl shadow-sm flex items-center justify-center border border-pink-100">
-            <Sparkle size={20} weight="fill" className="text-[#ff4d85]" />
+          <div className="p-1 bg-[#00f0ff] shadow-[0_0_10px_#00f0ff]">
+            <Cpu size={16} weight="fill" className="text-black" />
           </div>
-          <h1 className="text-lg font-black tracking-tight bg-gradient-to-r from-[#ff4d85] to-[#7b61ff] bg-clip-text text-transparent">
-            ScrollSync
+          <h1 className="font-['Orbitron'] font-black text-sm tracking-tighter text-[#00f0ff]">
+            SCROLL_SYNC.OS
           </h1>
         </div>
-        <div className="flex gap-2 items-center">
-            <button onClick={openGuide} className="p-2 text-slate-400 hover:text-[#ff4d85] transition-colors">
-                <Info size={20} weight="bold" />
+        <div className="flex gap-2">
+            <button onClick={openGuide} title="System Protocol" className="p-1 text-[#445b74] hover:text-[#00f0ff] transition-colors">
+                <Info size={16} weight="bold" />
             </button>
             <Toggle checked={isEnabled} onChange={toggleGlobal} />
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="px-4 mb-4">
-          <div className="bg-white/50 backdrop-blur-sm p-1.5 rounded-[24px] flex gap-1 border border-white/50 shadow-sm z-10 relative">
-            <TabButton id="v-tab" label="Vert" Icon={ArrowsDownUp} />
-            <TabButton id="h-tab" label="Horz" Icon={ArrowsLeftRight} />
-            <TabButton id="click-tab" label="Auto" Icon={CursorClick} />
-            <TabButton id="pad-tab" label="Pad" Icon={GameController} />
-          </div>
+      {/* Stats Bar */}
+      <div className="flex bg-[#0a1118] px-4 py-1.5 border-b border-[#0f172a] justify-between items-center">
+        <div className="flex items-center gap-1.5">
+          <Pulse size={10} className={isEnabled ? "text-[#00f0ff]" : "text-[#ff003c]"} />
+          <span className={`text-[8px] font-bold uppercase tracking-widest ${isEnabled ? "text-[#00f0ff]" : "text-[#ff003c]"}`}>
+            {isEnabled ? (isPaused ? "CORE_HALTED" : "SYSTEM_ACTIVE") : "OFFLINE"}
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+            <button 
+              onClick={() => updateSetting('isFloating', !settings.isFloating)}
+              className={`flex items-center gap-1 text-[8px] font-bold uppercase tracking-widest transition-colors ${settings.isFloating ? 'text-[#00f0ff]' : 'text-[#445b74]'}`}
+            >
+                <Monitor size={10} weight={settings.isFloating ? "fill" : "bold"} />
+                {settings.isFloating ? "FLOAT_ON" : "FLOAT_OFF"}
+            </button>
+            <span className="text-[8px] text-[#445b74] font-mono">0x{tabId?.toString(16).toUpperCase() || "NULL"}</span>
+        </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className={`flex-1 px-6 pb-6 flex flex-col z-10 transition-all duration-500 ${!isEnabled ? 'opacity-40 grayscale-50 scale-95' : 'opacity-100'}`}>
-        <div className="bg-white/90 backdrop-blur-md rounded-[24px] p-5 flex-1 shadow-sm border border-white/60 flex flex-col gap-6">
-          
+      {/* Nav */}
+      <div className="flex">
+        <TabButton id="v-tab" label="Vert" Icon={ArrowsDownUp} />
+        <TabButton id="h-tab" label="Horz" Icon={ArrowsLeftRight} />
+        <TabButton id="click-tab" label="Auto" Icon={CursorClick} />
+        <TabButton id="pad-tab" label="Pad" Icon={GameController} />
+      </div>
+
+      {/* Main Content */}
+      <div className={`flex-1 p-4 flex flex-col transition-all duration-300 ${!isEnabled ? 'opacity-20 grayscale' : 'opacity-100'}`}>
+        <div className="bg-[#0a1118] border border-[#0f172a] p-4 flex-1 relative">
           {activeTab === 'v-tab' && (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Vertical Scroll</span>
-                  <span className="text-xs font-bold text-slate-900">Enable Auto-Pilot</span>
-                </div>
+                <span className="text-[10px] font-bold text-[#445b74]">SCROLL_V_ENGAGED</span>
                 <Toggle checked={settings.vToggle} onChange={(val) => updateSetting('vToggle', val)} />
               </div>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <span className="text-[10px] font-black uppercase text-[#ff4d85] tracking-widest">Velocity</span>
-                  <span className="bg-pink-50 text-[#ff4d85] px-2 py-0.5 rounded-lg text-[10px] font-black border border-pink-100">
-                    {settings.vSpeed} px/s
-                  </span>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[9px] font-bold text-[#00f0ff]">VELOCITY</span>
+                  <span className="text-[9px] font-mono text-[#00f0ff]">{settings.vSpeed} PX/S</span>
                 </div>
-                <input type="range" min="0" max="500" value={Math.abs(settings.vSpeed)} onChange={(e) => updateSetting('vSpeed', parseInt(e.target.value))} className="kawaii-range" />
+                <input type="range" min="0" max="500" value={Math.abs(settings.vSpeed)} onChange={(e) => updateSetting('vSpeed', parseInt(e.target.value))} className="cyber-range" />
               </div>
-
-              <div className="bg-pink-50/50 p-3 rounded-2xl border border-pink-100 flex items-center gap-3">
-                <div className="p-2 bg-white rounded-xl shadow-sm">
-                   <ArrowRight size={14} weight="bold" className="text-[#ff4d85]" />
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-[9px] font-black uppercase text-pink-400">Pro Tip</span>
-                    <span className="text-[10px] text-pink-600 font-bold">Use [W] / [S] for fast speed sync</span>
-                </div>
+              <div className="p-2 border border-[#0f172a] bg-black/50 text-[8px] text-[#445b74] font-mono italic">
+                {" >> SHORTCUTS: [W] INC_SPD | [S] DEC_SPD"}
               </div>
             </div>
           )}
 
           {activeTab === 'h-tab' && (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Horizontal Scroll</span>
-                  <span className="text-xs font-bold text-slate-900">Side-to-Side Glide</span>
-                </div>
+                <span className="text-[10px] font-bold text-[#445b74]">SCROLL_H_ENGAGED</span>
                 <Toggle checked={settings.hToggle} onChange={(val) => updateSetting('hToggle', val)} />
               </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <span className="text-[10px] font-black uppercase text-[#ff4d85] tracking-widest">Velocity</span>
-                  <span className="bg-pink-50 text-[#ff4d85] px-2 py-0.5 rounded-lg text-[10px] font-black border border-pink-100">
-                    {settings.hSpeed} px/s
-                  </span>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[9px] font-bold text-[#00f0ff]">VELOCITY</span>
+                  <span className="text-[9px] font-mono text-[#00f0ff]">{settings.hSpeed} PX/S</span>
                 </div>
-                <input type="range" min="0" max="500" value={Math.abs(settings.hSpeed)} onChange={(e) => updateSetting('hSpeed', parseInt(e.target.value))} className="kawaii-range" />
+                <input type="range" min="0" max="500" value={Math.abs(settings.hSpeed)} onChange={(e) => updateSetting('hSpeed', parseInt(e.target.value))} className="cyber-range" />
               </div>
             </div>
           )}
 
           {activeTab === 'click-tab' && (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Smart Pulse</span>
-                  <span className="text-xs font-bold text-slate-900">Auto-Navigator</span>
-                </div>
+                <span className="text-[10px] font-bold text-[#445b74]">PULSE_GEN_ACTIVE</span>
                 <Toggle checked={settings.navToggle} onChange={(val) => updateSetting('navToggle', val)} />
               </div>
-              
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-1">
                 {['left', 'center', 'right'].map(pos => (
-                  <button key={pos} onClick={() => updateSetting('navPos', pos)} className={`kawaii-btn ${settings.navPos === pos ? 'active' : ''}`}>
+                  <button key={pos} onClick={() => updateSetting('navPos', pos)} className={`cyber-btn py-1 text-[8px] ${settings.navPos === pos ? 'active' : ''}`}>
                     {pos}
                   </button>
                 ))}
               </div>
-
-              <div className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <span className="text-[10px] font-black uppercase text-[#ff4d85] tracking-widest">Pulse Interval</span>
-                  <span className="bg-pink-50 text-[#ff4d85] px-2 py-0.5 rounded-lg text-[10px] font-black border border-pink-100">
-                    {settings.navInterval} sec
-                  </span>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[9px] font-bold text-[#00f0ff]">INTERVAL</span>
+                  <span className="text-[9px] font-mono text-[#00f0ff]">{settings.navInterval} SEC</span>
                 </div>
-                <input type="range" min="1" max="60" value={settings.navInterval} onChange={(e) => updateSetting('navInterval', parseInt(e.target.value))} className="kawaii-range" />
+                <input type="range" min="1" max="60" value={settings.navInterval} onChange={(e) => updateSetting('navInterval', parseInt(e.target.value))} className="cyber-range" />
               </div>
             </div>
           )}
 
           {activeTab === 'pad-tab' && (
-            <div className="space-y-5 animate-fade-in">
+            <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Gamepad Link</span>
-                  <span className="text-xs font-bold text-slate-900">Console Experience</span>
-                </div>
+                <span className="text-[10px] font-bold text-[#445b74]">HAPTIC_LINK</span>
                 <Toggle checked={settings.padToggle} onChange={(val) => updateSetting('padToggle', val)} />
               </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                {[ { key: 'padVActive', label: 'V-Scroll' }, { key: 'padHActive', label: 'H-Scroll' } ].map(mode => (
-                  <button key={mode.key} onClick={() => updateSetting(mode.key, !settings[mode.key])} className={`kawaii-btn py-3 ${settings[mode.key] ? 'active' : ''}`}>
+              <div className="grid grid-cols-2 gap-1.5">
+                {[ { key: 'padVActive', label: 'V_SCROLL' }, { key: 'padHActive', label: 'H_SCROLL' }, { key: 'padClickActive', label: 'SMART_CLK' } ].map(mode => (
+                  <button key={mode.key} onClick={() => updateSetting(mode.key, !settings[mode.key])} className={`cyber-btn py-1.5 text-[8px] ${settings[mode.key] ? 'active' : ''} ${mode.key === 'padClickActive' ? 'col-span-2' : ''}`}>
                     {mode.label}
                   </button>
                 ))}
-                <button onClick={() => updateSetting('padClickActive', !settings.padClickActive)} className={`kawaii-btn py-3 col-span-2 ${settings.padClickActive ? 'active' : ''}`}>
-                   Smart-Click [A]
-                </button>
               </div>
-
-              <div className="flex bg-slate-100 p-1 rounded-2xl border border-white">
-                <button onClick={() => updateSetting('padStick', 'left')} className={`flex-1 py-1.5 text-[9px] font-black uppercase rounded-xl transition-all ${settings.padStick === 'left' ? 'bg-white text-[#ff4d85] shadow-sm' : 'text-slate-400'}`}>Left Stick</button>
-                <button onClick={() => updateSetting('padStick', 'right')} className={`flex-1 py-1.5 text-[9px] font-black uppercase rounded-xl transition-all ${settings.padStick === 'right' ? 'bg-white text-[#ff4d85] shadow-sm' : 'text-slate-400'}`}>Right Stick</button>
+              <div className="flex bg-[#050a0e] p-1 border border-[#0f172a]">
+                <button onClick={() => updateSetting('padStick', 'left')} className={`flex-1 py-1 text-[8px] font-bold ${settings.padStick === 'left' ? 'bg-[#00f0ff] text-black' : 'text-[#445b74]'}`}>LEFT_S</button>
+                <button onClick={() => updateSetting('padStick', 'right')} className={`flex-1 py-1 text-[8px] font-bold ${settings.padStick === 'right' ? 'bg-[#00f0ff] text-black' : 'text-[#445b74]'}`}>RIGHT_S</button>
               </div>
-
-              <div className="flex items-center justify-center gap-2 pt-1">
-                <div className={`w-2 h-2 rounded-full ${padConnected ? 'bg-[#10b981] shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-slate-300'}`} />
-                <span className={`text-[10px] font-black uppercase tracking-widest ${padConnected ? 'text-[#10b981]' : 'text-slate-400'}`}>
-                  {padConnected ? "Pad Linked" : "Awaiting Pad"}
-                </span>
+              <div className="flex items-center justify-center gap-1.5 pt-1">
+                <div className={`w-1.5 h-1.5 ${padConnected ? 'bg-[#00f0ff] shadow-[0_0_5px_#00f0ff] animate-pulse' : 'bg-[#445b74]'}`} />
+                <span className={`text-[7px] font-black uppercase ${padConnected ? 'text-[#00f0ff]' : 'text-[#445b74]'}`}>{padConnected ? "CONTROLLER_LINKED" : "AWAITING_SIGNAL"}</span>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Footer Controls */}
-      <div className="px-8 pb-8 pt-2 flex flex-col gap-5 z-10">
-        <div className="flex justify-between items-center">
-            <button 
-              onClick={() => chrome.tabs.sendMessage(tabId, { action: "manualNav", direction: "back" })} 
-              className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-[#ff4d85] hover:scale-110 active:scale-90 transition-all border border-pink-50"
-            >
-              <Rewind size={24} weight="fill" />
+      {/* Footer */}
+      <div className="px-6 py-4 flex flex-col gap-4">
+        <div className="flex justify-between items-center px-4">
+            <button onClick={() => chrome.tabs.sendMessage(tabId, { action: "manualNav", direction: "back" })} className="p-2 border border-[#00f0ff]/30 text-[#00f0ff] hover:bg-[#00f0ff]/10 active:scale-90 transition-all">
+              <Rewind size={20} weight="bold" />
             </button>
-            
-            <button onClick={togglePause} className={`morph-btn-kawaii ${isPaused ? 'is-paused' : ''}`}>
-              <div className="morph-icon-kawaii">
-                {isPaused ? <Play size={28} weight="fill" /> : <Pause size={28} weight="fill" />}
-              </div>
+            <button onClick={togglePause} className={`morph-btn-cyber ${isPaused ? 'is-paused' : ''}`}>
+              <div className={`morph-icon-cyber ${isPaused ? 'play' : 'pause'}`} />
             </button>
-
-            <button 
-              onClick={() => chrome.tabs.sendMessage(tabId, { action: "manualNav", direction: "forward" })} 
-              className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-[#ff4d85] hover:scale-110 active:scale-90 transition-all border border-pink-50"
-            >
-              <FastForward size={24} weight="fill" />
+            <button onClick={() => chrome.tabs.sendMessage(tabId, { action: "manualNav", direction: "forward" })} className="p-2 border border-[#00f0ff]/30 text-[#00f0ff] hover:bg-[#00f0ff]/10 active:scale-90 transition-all">
+              <FastForward size={20} weight="bold" />
             </button>
         </div>
-        
-        <div className="flex justify-between items-center px-2">
-            <button 
-                onClick={() => updateSetting('isFloating', !settings.isFloating)}
-                className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] transition-colors ${settings.isFloating ? 'text-[#7b61ff]' : 'text-slate-400'}`}
-            >
-                <Monitor size={14} weight={settings.isFloating ? "fill" : "bold"} />
-                {settings.isFloating ? "Float On" : "Float Off"}
-            </button>
-            <div className="text-[9px] font-black text-slate-300 tracking-[0.2em] uppercase">
-                v1.0.0
-            </div>
+        <div className="text-[7px] text-center font-bold text-[#445b74] tracking-[0.4em] uppercase">
+          {"// NEURAL_LINK_ESTABLISHED //"}
         </div>
       </div>
     </div>
