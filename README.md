@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="icon.png" alt="ScrollSync Icon" width="100" height="100" />
+  <img src="icon.svg" alt="ScrollSync Icon" width="100" height="100" />
 
   # ScrollSync
 
