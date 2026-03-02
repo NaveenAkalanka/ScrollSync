@@ -10,7 +10,8 @@
     <a href="#-features">Features</a> •
     <a href="#-tech-stack">Tech Stack</a> •
     <a href="#-getting-started">Getting Started</a> •
-    <a href="#-controls--shortcuts">Controls</a>
+    <a href="#-controls--shortcuts">Controls</a> •
+    <a href="#-project-structure">Structure</a>
   </p>
 
   [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
@@ -38,6 +39,7 @@
 - **⌨ Keyboard Shortcuts**: Fast runtime control with `Space`, `W`, `S`, `A`, `D`.
 - **🧩 Per-Tab State**: Tab-specific configuration managed via background service worker + `chrome.storage.local`.
 - **🎨 Custom UI Theme**: Neon-kawaii popup interface built with React + TailwindCSS.
+- **📘 Built-in Pages**: Includes guide and about pages exposed as web-accessible resources.
 
 ---
 
@@ -98,11 +100,18 @@
 ## 🧱 Project Structure
 
 ```text
+public/
+  about.html    # About page
+  guide.html    # User guide page
+  icon.png      # Public icon asset
+  icon.svg      # Public icon asset
+
 src/
   background/   # Service worker (state, badge, context menus)
   content/      # Page runtime (scroll, click, gamepad, floating UI)
   App.jsx       # Popup UI
   main.jsx      # Popup entry
+
 manifest.json   # Extension manifest (MV3)
 vite.config.mjs # Vite + CRX config
 ```
