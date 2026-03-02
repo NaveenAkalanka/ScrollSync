@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScrollSync.OS // Operational Manual</title>
+    <title>ScrollSync // Operational Manual</title>
     <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,18 +21,20 @@
             color: #fff;
             font-family: 'Tomorrow', sans-serif;
             margin: 0;
-            padding: 40px 20px;
+            padding: 20px;
             line-height: 1.6;
+            box-sizing: border-box;
         }
 
         .container {
             max-width: 900px;
+            width: 100%;
             margin: 0 auto;
             border: 1px solid var(--cyber-cyan);
-            padding: 50px;
-            position: relative;
+            padding: 5% 10%;
             background: rgba(0, 240, 255, 0.02);
             clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);
+            box-sizing: border-box;
         }
 
         header {
@@ -42,6 +44,8 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         h1 {
@@ -50,7 +54,7 @@
             text-transform: uppercase;
             letter-spacing: 4px;
             margin: 0;
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
         }
 
         .version {
@@ -88,10 +92,6 @@
             color: #cbd5e1;
             font-size: 0.95rem;
             margin-bottom: 15px;
-        }
-
-        strong {
-            color: var(--cyber-cyan);
         }
 
         .grid {
@@ -135,28 +135,20 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-size: 0.85rem;
+            flex-wrap: wrap;
         }
 
         .key {
             background: var(--cyber-cyan);
             color: #000;
-            padding: 1px 6px;
+            padding: 2px 8px;
             font-weight: 900;
             border-radius: 3px;
-            min-width: 50px;
+            min-width: 60px;
             text-align: center;
             font-size: 0.75rem;
-        }
-
-        .stat-line {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--cyber-text-dim);
-            margin-top: 10px;
-            font-family: monospace;
         }
 
         .footer {
@@ -179,12 +171,21 @@
             z-index: 100;
             opacity: 0.05;
         }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            }
+            .grid { grid-template-cols: 1fr; }
+            header { flex-direction: column; align-items: center; text-align: center; }
+        }
     </style>
 </head>
 <body class="scanlines">
     <div class="container">
         <header>
-            <h1>ScrollSync.OS // Operational Manual</h1>
+            <h1>ScrollSync</h1>
             <span class="version">CORE_V1.0.0</span>
         </header>
         
@@ -195,57 +196,45 @@
             <div class="card">
                 <div class="mode-badge">Global State</div>
                 <p>The <strong>Power Toggle</strong> in the header links the extension to the current tab. Without this link, all automated protocols remain offline.</p>
-                <p>Settings are <strong>Tab-Specific</strong> and persist across page loads and domain jumps until the tab is closed.</p>
+                <p>Settings are <strong>Tab-Specific</strong> and persist across page loads until the tab is closed.</p>
             </div>
             <div class="card">
                 <div class="mode-badge">Execution Control</div>
-                <p>Use the <strong>Core Halt (Pause)</strong> button in the footer to temporarily suspend all active movements. This is essential for reading stationary text or static data.</p>
-                <div class="stat-line"><span>HALT_STATUS:</span> <span>STABLE</span></div>
+                <p>Use the <strong>Core Halt (Pause)</strong> button in the footer to temporarily suspend active movements. Essential for static data analysis.</p>
             </div>
         </div>
 
         <h2>Section 02 // Navigation Modules</h2>
         
         <h3>Vert & Horz Glide</h3>
-        <p>Provides constant, linear movement along the specified axis. The system uses <strong>Intelligent Container Detection</strong> to automatically find the primary scrollable element on the page (even within nested frames).</p>
+        <p>Linear movement along axes. The system automatically finds the primary scrollable element on the page.</p>
         <ul>
-            <li><strong>Velocity:</strong> Adjustable from 0 to 500 PX/S.</li>
-            <li><strong>Detection:</strong> Prioritizes <code>document.scrollingElement</code> before scanning for overflow containers.</li>
+            <li><strong>Velocity:</strong> Adjustable 0-500 PX/S.</li>
+            <li><strong>Detection:</strong> Prioritizes active scrolling elements.</li>
         </ul>
 
         <h3>Smart Pulse (Auto-Clicker)</h3>
-        <p>Designed for image galleries, manga readers, and presentation decks. The system simulates human interaction at a fixed frequency.</p>
+        <p>Simulates human interaction for image galleries and readers.</p>
         <ul>
-            <li><strong>Logic:</strong> Scans the DOM for the most prominent <code>img</code> or <code>canvas</code> element to determine the click target.</li>
-            <li><strong>Positioning:</strong> Choose <strong>LEFT</strong>, <strong>CENTER</strong>, or <strong>RIGHT</strong> based on the site's navigation layout.</li>
-            <li><strong>Interval:</strong> Adjustable pulse frequency (1 to 60 seconds).</li>
+            <li><strong>Logic:</strong> Targets prominent <code>img</code> or <code>canvas</code> elements.</li>
+            <li><strong>Position:</strong> Choose <strong>LEFT</strong>, <strong>CENTER</strong>, or <strong>RIGHT</strong>.</li>
+            <li><strong>Interval:</strong> 1 to 60 seconds.</li>
         </ul>
 
         <h2>Section 03 // Haptic Interface (Gamepad)</h2>
-        <p>The extension supports direct <strong>Gamepad API Polling</strong> for a console-like browsing experience. Once linked, the following mappings apply:</p>
+        <p>Direct Gamepad API polling for console-like control.</p>
         <div class="grid">
             <div class="card">
                 <div class="mode-badge">Analog Mapping</div>
-                <p>Map the <strong>LEFT</strong> or <strong>RIGHT</strong> analog stick to control scrolling speed dynamically based on tilt intensity.</p>
+                <p>Map <strong>LEFT/RIGHT</strong> sticks to control velocity based on tilt intensity.</p>
             </div>
             <div class="card">
                 <div class="mode-badge">Trigger Actions</div>
-                <p>The <strong>A Button</strong> (or Bottom Face Button) and <strong>Right Trigger</strong> are mapped to trigger an immediate Smart Click pulse.</p>
+                <p><strong>A Button</strong> and <strong>Right Trigger</strong> are mapped to immediate Smart Click pulses.</p>
             </div>
         </div>
 
-        <h2>Section 04 // UI Overlay & Floating Controls</h2>
-        <p>Toggle <strong>FLOAT_ON</strong> to project a persistent control interface onto the page surface. This allows for manipulation without opening the extension popup.</p>
-        <ul>
-            <li><strong>Interaction:</strong> Left-Click to drag the icon. Context-Click (Right-Click) to expand the radial menu.</li>
-            <li><strong>Visual Feedback:</strong> A glowing ring indicates system status: 
-                <span style="color: var(--cyber-cyan)">Cyan (Active)</span>, 
-                <span style="color: var(--cyber-red)">Red (Halted)</span>, 
-                <span style="color: var(--cyber-text-dim)">Gray (Offline)</span>.
-            </li>
-        </ul>
-
-        <h2>Section 05 // Shortcut Protocol</h2>
+        <h2>Section 04 // Shortcut Protocol</h2>
         <div class="key-list">
             <div class="key-item"><span class="key">SPACE</span> Toggle Core Halt (Pause/Resume)</div>
             <div class="key-item"><span class="key">W / S</span> Adjust Active Velocity (Inc/Dec)</div>
@@ -253,7 +242,8 @@
         </div>
 
         <div class="footer">
-            // NEURAL_LINK_ESTABLISHED // DATA_FLOW_OPTIMIZED // NO_ERROR_DETECTED //
+            <div style="margin-bottom: 10px; color: #fff; font-weight: bold; letter-spacing: 1px;">Designed & Developed by Naveen Akalanka</div>
+            <a href="https://www.buymeacoffee.com/naveenakalanka" target="_blank" style="color: var(--cyber-yellow); text-decoration: none; font-weight: 900; border: 1px solid var(--cyber-yellow); padding: 5px 15px; display: inline-block; margin-top: 5px;">☕ Support via Buy Me A Coffee</a>
         </div>
     </div>
 </body>

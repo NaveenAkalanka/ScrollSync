@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScrollSync // Neural Identity</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyber-cyan: #00f0ff;
+            --cyber-yellow: #fcee0a;
+            --cyber-red: #ff003c;
+            --cyber-bg: #050a0e;
+            --cyber-surface: #0a1118;
+            --cyber-border: #0f172a;
+            --cyber-text-dim: #445b74;
+        }
+
+        body {
+            background-color: var(--cyber-bg);
+            color: #fff;
+            font-family: 'Tomorrow', sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid var(--cyber-cyan);
+            padding: 30px;
+            background: rgba(0, 240, 255, 0.02);
+            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .logo-area img {
+            width: 15vw;
+            max-width: 91px;
+            min-width: 60px;
+            filter: drop-shadow(0 0 12px var(--cyber-cyan));
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin: 10px 0;
+            font-size: 1.4rem;
+        }
+
+        .tagline {
+            color: var(--cyber-yellow);
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .dev-card {
+            background: var(--cyber-surface);
+            border: 1px solid var(--cyber-border);
+            padding: 25px 15px;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dev-card::after {
+            content: "";
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--cyber-cyan);
+            box-shadow: 0 0 10px var(--cyber-cyan);
+        }
+
+        .dev-subtext {
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .dev-name {
+            color: var(--cyber-cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.2rem, 5vw, 1.6rem);
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .license-area {
+            margin-bottom: 25px;
+            padding: 10px;
+            font-size: 0.7rem;
+            color: var(--cyber-text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-cols: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .cyber-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border: 1px solid var(--cyber-cyan);
+            color: var(--cyber-cyan);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .cyber-link:hover {
+            background: var(--cyber-cyan);
+            color: #000;
+            box-shadow: 0 0 12px var(--cyber-cyan);
+        }
+
+        .bmc-btn {
+            grid-column: 1 / -1;
+            border-color: var(--cyber-yellow);
+            color: var(--cyber-yellow);
+            background: rgba(252, 238, 10, 0.05);
+        }
+
+        .bmc-btn:hover {
+            background: var(--cyber-yellow);
+            color: #000;
+            box-shadow: 0 0 12px var(--cyber-yellow);
+        }
+
+        .scanlines::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.05;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            }
+            h1 { font-size: 1.2rem; }
+            .tagline { font-size: 0.65rem; }
+            .links-grid { grid-template-cols: 1fr; }
+        }
+    </style>
+</head>
+<body class="scanlines">
+    <div class="container">
+        <div class="logo-area">
+            <img src="icon.svg" alt="ScrollSync Logo">
+            <h1>ScrollSync</h1>
+            <div class="tagline">Automated Navigation Suite</div>
+        </div>
+
+        <div class="dev-card">
+            <div class="dev-subtext">Designed & Developed by</div>
+            <div class="dev-name">Naveen Akalanka</div>
+        </div>
+
+        <div class="license-area">
+            Distributed under the ISC License
+        </div>
+
+        <div class="links-grid">
+            <a href="https://www.buymeacoffee.com/naveenakalanka" target="_blank" class="cyber-link bmc-btn">☕ Buy Me A Coffee</a>
+            <a href="https://github.com/NaveenAkalanka/ScrollSync" target="_blank" class="cyber-link">📂 Source Repository</a>
+            <a href="guide.html" class="cyber-link">📖 Neural Manual</a>
+        </div>
+    </div>
+</body>
+</html>

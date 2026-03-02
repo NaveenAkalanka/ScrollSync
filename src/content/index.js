@@ -242,7 +242,7 @@ class FloatingIcon {
         `;
 
         this.logoImg = document.createElement('img');
-        this.logoImg.src = chrome.runtime.getURL('icon.png');
+        this.logoImg.src = chrome.runtime.getURL('icon.svg');
         this.logoImg.style.cssText = `width: 28px; height: 28px; pointer-events: none; filter: drop-shadow(0 0 5px #00f0ff);`;
         this.container.appendChild(this.logoImg);
 
@@ -305,19 +305,30 @@ class FloatingIcon {
 
     updateIcon() {
         if (!isEnabled) {
-            this.statusLine.style.background = '#445b74'; this.container.style.borderColor = '#445b74'; this.container.style.boxShadow = 'none'; this.logoImg.style.filter = 'grayscale(1) opacity(0.5)';
+            this.statusLine.style.background = '#445b74'; 
+            this.container.style.borderColor = '#445b74'; 
+            this.container.style.boxShadow = 'none'; 
+            this.logoImg.style.filter = 'grayscale(1) opacity(0.5)';
         } else if (currentSettings.isPaused) {
-            this.statusLine.style.background = '#ff003c'; this.container.style.borderColor = '#ff003c'; this.container.style.boxShadow = '0 0 15px rgba(255,0,60,0.4)'; this.logoImg.style.filter = 'grayscale(1) drop-shadow(0 0 5px #ff003c)';
+            this.statusLine.style.background = '#fcee0a'; 
+            this.container.style.borderColor = '#fcee0a'; 
+            this.container.style.boxShadow = '0 0 15px rgba(252, 238, 10, 0.4)'; 
+            this.logoImg.style.filter = 'sepia(1) saturate(5) hue-rotate(10deg)'; // Give logo a yellow tint
         } else {
-            this.statusLine.style.background = '#00f0ff'; this.container.style.borderColor = '#00f0ff'; this.container.style.boxShadow = '0 0 15px rgba(0,240,255,0.4)'; this.logoImg.style.filter = 'drop-shadow(0 0 5px #00f0ff)';
+            this.statusLine.style.background = '#00f0ff'; 
+            this.container.style.borderColor = '#00f0ff'; 
+            this.container.style.boxShadow = '0 0 15px rgba(0, 240, 255, 0.4)'; 
+            this.logoImg.style.filter = 'drop-shadow(0 0 5px #00f0ff)';
         }
         if (this.menuButtons[0]) {
             const parser = new DOMParser();
             const iconStr = currentSettings.isPaused ? ICONS.play : ICONS.pause;
             const iconDoc = parser.parseFromString(iconStr, 'image/svg+xml');
             this.menuButtons[0].el.replaceChildren(iconDoc.documentElement);
-            this.menuButtons[0].el.style.borderColor = currentSettings.isPaused ? '#10b981' : '#00f0ff';
-            this.menuButtons[0].el.style.color = currentSettings.isPaused ? '#10b981' : '#00f0ff';
+            
+            const stateColor = currentSettings.isPaused ? '#fcee0a' : '#00f0ff';
+            this.menuButtons[0].el.style.borderColor = stateColor;
+            this.menuButtons[0].el.style.color = stateColor;
         }
     }
 
@@ -368,8 +379,14 @@ function toggleOverlayPanel() {
 }
 
 function manageFloatingIcon() {
-    if (currentSettings.isFloating) { if (!floatingIcon) floatingIcon = new FloatingIcon(); else floatingIcon.updateIcon(); }
-    else if (floatingIcon) { floatingIcon.remove(); floatingIcon = null; }
+    if (isEnabled && currentSettings.isFloating) { 
+        if (!floatingIcon) floatingIcon = new FloatingIcon(); 
+        else floatingIcon.updateIcon(); 
+    }
+    else if (floatingIcon) { 
+        floatingIcon.remove(); 
+        floatingIcon = null; 
+    }
 }
 
 function showStatusToast(message) {
@@ -421,6 +438,7 @@ function adjustSpeed(delta) {
         interval = Math.max(1, Math.min(60, interval));
         currentSettings.nav.interval = interval * 1000;
         safeSendMessage({ action: "updateSettingsUI", settings: { navInterval: interval } });
+        manageClickInterval(); // RESTART TIMER WITH NEW SPEED
         showStatusToast(`Pulse: ${interval}s`);
     }
 }
