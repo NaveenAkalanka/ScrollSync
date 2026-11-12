@@ -3,198 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScrollSync // Neural Identity</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>About ScrollSync</title>
     <style>
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 500 800; font-display: swap; src: url('fonts/manrope-latin.woff2') format('woff2'); }
+        @font-face { font-family: 'Material Symbols Rounded'; font-style: normal; font-weight: 500; font-display: block; src: url('fonts/material-symbols-rounded-subset.woff2') format('woff2'); }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         :root {
-            --cyber-cyan: #00f0ff;
-            --cyber-yellow: #fcee0a;
-            --cyber-red: #ff003c;
-            --cyber-bg: #050a0e;
-            --cyber-surface: #0a1118;
-            --cyber-border: #0f172a;
-            --cyber-text-dim: #445b74;
+            --clay: #ECE7EA;
+            --ink: #3B2B35;
+            --ink-2: #6E5C66;
+            --accent: #FF2A5F;
+            --accent-2: #FF7B00;
+            --accent-ink: #C8174A;
+            --sh-dark: rgba(150, 118, 136, 0.42);
+            --sh-light: rgba(255, 255, 255, 0.95);
+            --raise-lg: 10px 10px 22px var(--sh-dark), -10px -10px 22px var(--sh-light);
+            --raise-sm: 3px 3px 6px var(--sh-dark), -3px -3px 6px var(--sh-light);
+            --press: inset 3px 3px 7px var(--sh-dark), inset -3px -3px 7px var(--sh-light);
+            --press-sm: inset 2px 2px 4px var(--sh-dark), inset -2px -2px 4px var(--sh-light);
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
+        html { background: var(--clay); }
         body {
-            background-color: var(--cyber-bg);
-            color: #fff;
-            font-family: 'Tomorrow', sans-serif;
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: var(--clay);
+            color: var(--ink);
+            font-family: 'Manrope', system-ui, sans-serif;
             min-height: 100vh;
-            box-sizing: border-box;
+            display: flex; align-items: center; justify-content: center;
+            padding: 32px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+        ::selection { background: rgba(255, 42, 95, 0.22); color: var(--ink); }
+        a:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+
+        .icon {
+            font-family: 'Material Symbols Rounded';
+            font-weight: normal; font-style: normal;
+            font-size: 18px; line-height: 1; letter-spacing: normal;
+            text-transform: none; white-space: nowrap; direction: ltr;
+            display: inline-block;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+            -webkit-font-feature-settings: 'liga';
         }
 
-        .container {
+        .card {
+            width: 100%; max-width: 380px;
+            background: var(--clay); border-radius: 28px; box-shadow: var(--raise-lg);
+            padding: 36px 28px 28px;
+            display: flex; flex-direction: column; align-items: center; gap: 24px;
+            text-align: center;
+        }
+
+        .mark { width: 104px; height: 104px; display: block; }
+        .mark img { width: 100%; height: 100%; display: block; }
+
+        h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+        .tagline { margin-top: 8px; font-size: 14px; font-weight: 600; color: var(--ink-2); line-height: 1.5; }
+
+        .meta {
             width: 100%;
-            max-width: 600px;
-            border: 1px solid var(--cyber-cyan);
-            padding: 30px;
-            background: rgba(0, 240, 255, 0.02);
-            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
-            text-align: center;
-            box-sizing: border-box;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
         }
-
-        .logo-area img {
-            width: 15vw;
-            max-width: 91px;
-            min-width: 60px;
-            filter: drop-shadow(0 0 12px var(--cyber-cyan));
+        .meta div {
+            padding: 12px 14px; border-radius: 16px; background: var(--clay); box-shadow: var(--press-sm);
+            display: flex; flex-direction: column; gap: 2px; text-align: left;
         }
+        .meta span { font-size: 11px; font-weight: 700; color: var(--ink-2); }
+        .meta strong { font-size: 14px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+        .meta .full { grid-column: 1 / -1; }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--cyber-cyan);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin: 10px 0;
-            font-size: 1.4rem;
+        .features { width: 100%; list-style: none; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+        .features li {
+            display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: center;
+            padding: 10px 14px 10px 10px; border-radius: 16px; background: var(--clay); box-shadow: var(--raise-sm);
         }
-
-        .tagline {
-            color: var(--cyber-yellow);
-            font-size: 0.75rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 25px;
+        .features .chip {
+            width: 36px; height: 36px; border-radius: 9999px; box-shadow: var(--press-sm);
+            display: flex; align-items: center; justify-content: center; color: var(--accent-ink);
         }
+        .features b { display: block; font-size: 13px; font-weight: 800; color: var(--ink); }
+        .features small { display: block; font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.4; }
+        .section-label { width: 100%; text-align: left; font-size: 11px; font-weight: 800; color: var(--ink-2); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: -12px; }
 
-        .dev-card {
-            background: var(--cyber-surface);
-            border: 1px solid var(--cyber-border);
-            padding: 25px 15px;
-            margin-bottom: 25px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+        .links { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            height: 46px; padding: 0 14px; border-radius: 9999px;
+            background: var(--clay); box-shadow: var(--raise-sm);
+            color: var(--ink); font-size: 13px; font-weight: 800; text-decoration: none;
+            transition: box-shadow 0.25s var(--ease), transform 0.2s var(--ease);
         }
-
-        .dev-card::after {
-            content: "";
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 2px;
-            background: var(--cyber-cyan);
-            box-shadow: 0 0 10px var(--cyber-cyan);
-        }
-
-        .dev-subtext {
-            color: #cbd5e1;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .dev-name {
-            color: var(--cyber-cyan);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: clamp(1.2rem, 5vw, 1.6rem);
-            letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-        }
-
-        .license-area {
-            margin-bottom: 25px;
-            padding: 10px;
-            font-size: 0.7rem;
-            color: var(--cyber-text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .links-grid {
-            display: grid;
-            grid-template-cols: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-        }
-
-        .cyber-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-            border: 1px solid var(--cyber-cyan);
-            color: var(--cyber-cyan);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            transition: all 0.3s;
-            background: rgba(0, 240, 255, 0.05);
-        }
-
-        .cyber-link:hover {
-            background: var(--cyber-cyan);
-            color: #000;
-            box-shadow: 0 0 12px var(--cyber-cyan);
-        }
-
-        .bmc-btn {
+        .btn:active { box-shadow: var(--press-sm); transform: scale(0.98); }
+        .btn .icon { color: var(--accent-ink); }
+        .btn-wide { grid-column: 1 / -1; }
+        .btn-fill {
             grid-column: 1 / -1;
-            border-color: var(--cyber-yellow);
-            color: var(--cyber-yellow);
-            background: rgba(252, 238, 10, 0.05);
+            background: #C8174A linear-gradient(135deg, #C8174A, #B83D0A); color: #fff;
+            box-shadow: 4px 4px 10px rgba(200, 23, 74, 0.3), -4px -4px 10px var(--sh-light);
         }
-
-        .bmc-btn:hover {
-            background: var(--cyber-yellow);
-            color: #000;
-            box-shadow: 0 0 12px var(--cyber-yellow);
+        .btn-fill .icon { color: #fff; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
         }
-
-        .scanlines::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
-            opacity: 0.05;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-                clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-            }
-            h1 { font-size: 1.2rem; }
-            .tagline { font-size: 0.65rem; }
-            .links-grid { grid-template-cols: 1fr; }
+        /* Windows High Contrast drops shadows, the only edges clay has */
+        @media (forced-colors: active) {
+            .card, .meta div, .features li, .btn { outline: 1px solid CanvasText; outline-offset: -1px; }
         }
     </style>
 </head>
-<body class="scanlines">
-    <div class="container">
-        <div class="logo-area">
-            <img src="icon.svg" alt="ScrollSync Logo">
+<body>
+    <main class="card">
+        <div class="mark"><img src="icon.svg" alt="ScrollSync logo" width="104" height="104"></div>
+
+        <div>
             <h1>ScrollSync</h1>
-            <div class="tagline">Automated Navigation Suite</div>
+            <p class="tagline">Hands-free scrolling, timed clicks,<br>and gamepad control for the web.</p>
         </div>
 
-        <div class="dev-card">
-            <div class="dev-subtext">Designed & Developed by</div>
-            <div class="dev-name">Naveen Akalanka</div>
+        <p class="section-label">What it does</p>
+        <ul class="features">
+            <li><span class="chip icon" aria-hidden="true">swap_vert</span><span><b>Scroll</b><small>Steady auto-scroll up or down, with sideways pages handled for you.</small></span></li>
+            <li><span class="chip icon" aria-hidden="true">ads_click</span><span><b>Auto Pulse</b><small>Timed clicks on the biggest image, for galleries and comics.</small></span></li>
+            <li><span class="chip icon" aria-hidden="true">stadia_controller</span><span><b>Pad</b><small>Scroll and click with a gamepad stick and buttons.</small></span></li>
+            <li><span class="chip icon" aria-hidden="true">touch_app</span><span><b>Floating hub</b><small>A draggable on-page puck: tap for the panel, right-click or long-press for quick actions.</small></span></li>
+        </ul>
+
+        <div class="meta">
+            <div><span>Version</span><strong data-version="">1.1.0</strong></div>
+            <div><span>License</span><strong>CC BY-NC-SA 4.0</strong></div>
+            <div class="full"><span>Designed and built by</span><strong>Naveen Akalanka</strong></div>
         </div>
 
-        <div class="license-area">
-            Distributed under the ISC License
-        </div>
-
-        <div class="links-grid">
-            <a href="https://www.buymeacoffee.com/naveenakalanka" target="_blank" class="cyber-link bmc-btn">☕ Buy Me A Coffee</a>
-            <a href="https://github.com/NaveenAkalanka/ScrollSync" target="_blank" class="cyber-link">📂 Source Repository</a>
-            <a href="guide.html" class="cyber-link">📖 Neural Manual</a>
-        </div>
-    </div>
+        <nav class="links" aria-label="Links">
+            <a class="btn btn-fill" href="https://www.buymeacoffee.com/naveenakalanka" target="_blank" rel="noopener"><span class="icon">local_cafe</span>Buy me a coffee</a>
+            <a class="btn" href="https://github.com/NaveenAkalanka/ScrollSync" target="_blank" rel="noopener"><span class="icon">code</span>Source code</a>
+            <a class="btn" href="https://github.com/NaveenAkalanka/ScrollSync/releases" target="_blank" rel="noopener"><span class="icon">info</span>Releases</a>
+            <a class="btn btn-wide" href="guide.html"><span class="icon">menu_book</span>User guide</a>
+        </nav>
+    </main>
+<script src="version.js"></script>
 </body>
 </html>
