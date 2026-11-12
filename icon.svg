@@ -1,14 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1731.6 1731.6">
-  <!-- Generator: Adobe Illustrator 29.4.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 152)  -->
+<!-- ScrollSync mark, Clay (neumorphism) edition.
+     Same chevron geometry as the original (brand/original/icon.svg), set on a raised clay disc
+     and embossed in the brand pink-to-orange. Source for public/icon.png and public/icons/*. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <style>
-      .st0 {
-        fill: #faed16;
-      }
-    </style>
+    <!-- Disc: lit from the top left, so it reads as raised clay -->
+    <linearGradient id="clay" x1="0.15" y1="0.1" x2="0.85" y2="0.95">
+      <stop offset="0" stop-color="#F8F4F6"/>
+      <stop offset="0.55" stop-color="#ECE7EA"/>
+      <stop offset="1" stop-color="#DCD2D8"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0.15" y1="0.1" x2="0.85" y2="0.95">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#96768A" stop-opacity="0.35"/>
+    </linearGradient>
+    <!-- Chevrons: deep enough to hold contrast at 16 px -->
+    <linearGradient id="ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1731.6" y2="1731.6">
+      <stop offset="0" stop-color="#E8194F"/>
+      <stop offset="1" stop-color="#EE5F12"/>
+    </linearGradient>
+    <filter id="drop" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#4A2C3C" flood-opacity="0.32"/>
+    </filter>
+    <!-- Embossed chevrons: white catch-light top left, plum shade bottom right -->
+    <filter id="emboss" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12" result="b"/>
+      <feOffset in="b" dx="14" dy="18" result="bd"/>
+      <feFlood flood-color="#8A2A46" flood-opacity="0.42"/>
+      <feComposite in2="bd" operator="in" result="dark"/>
+      <feOffset in="b" dx="-10" dy="-12" result="bl"/>
+      <feFlood flood-color="#FFFFFF" flood-opacity="0.95"/>
+      <feComposite in2="bl" operator="in" result="light"/>
+      <feMerge>
+        <feMergeNode in="light"/>
+        <feMergeNode in="dark"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
-  <polygon class="st0" points="865.9 1052.3 1137.6 1459.9 865.9 1731.6 594.2 1459.9 865.9 1052.3"/>
-  <polygon class="st0" points="1386.6 1210.9 1258.4 1339 865.9 749.9 473.2 1339 345.1 1210.9 865.9 429.7 1386.6 1210.9"/>
-  <polygon class="st0" points="1731.6 865.8 1507.5 1090 865.9 127.3 224.2 1090 0 865.8 865.9 0 1731.6 865.8"/>
+
+  <circle cx="512" cy="512" r="452" fill="url(#clay)" filter="url(#drop)"/>
+  <circle cx="512" cy="512" r="446" fill="none" stroke="url(#rim)" stroke-width="12"/>
+
+  <g filter="url(#emboss)">
+    <g transform="translate(512 528) scale(0.31) translate(-865.8 -865.8)" fill="url(#ink)">
+      <polygon points="865.9 1052.3 1137.6 1459.9 865.9 1731.6 594.2 1459.9 865.9 1052.3"/>
+      <polygon points="1386.6 1210.9 1258.4 1339 865.9 749.9 473.2 1339 345.1 1210.9 865.9 429.7 1386.6 1210.9"/>
+      <polygon points="1731.6 865.8 1507.5 1090 865.9 127.3 224.2 1090 0 865.8 865.9 0 1731.6 865.8"/>
+    </g>
+  </g>
 </svg>
