@@ -3,248 +3,477 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScrollSync // Operational Manual</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>ScrollSync Guide</title>
     <style>
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 500 800; font-display: swap; src: url('fonts/manrope-latin.woff2') format('woff2'); }
+        @font-face { font-family: 'Material Symbols Rounded'; font-style: normal; font-weight: 500; font-display: block; src: url('fonts/material-symbols-rounded-subset.woff2') format('woff2'); }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         :root {
-            --cyber-cyan: #00f0ff;
-            --cyber-yellow: #fcee0a;
-            --cyber-red: #ff003c;
-            --cyber-bg: #050a0e;
-            --cyber-surface: #0a1118;
-            --cyber-border: #0f172a;
-            --cyber-text-dim: #445b74;
+            --clay: #ECE7EA;
+            --ink: #3B2B35;
+            --ink-2: #6E5C66;
+            --ink-3: #9A8A93;
+            --accent: #FF2A5F;
+            --accent-2: #FF7B00;
+            --accent-ink: #C8174A;
+            --run: #0F7050;
+            --sh-dark: rgba(150, 118, 136, 0.42);
+            --sh-light: rgba(255, 255, 255, 0.95);
+            --raise-lg: 10px 10px 22px var(--sh-dark), -10px -10px 22px var(--sh-light);
+            --raise: 5px 5px 11px var(--sh-dark), -5px -5px 11px var(--sh-light);
+            --raise-sm: 3px 3px 6px var(--sh-dark), -3px -3px 6px var(--sh-light);
+            --press: inset 3px 3px 7px var(--sh-dark), inset -3px -3px 7px var(--sh-light);
+            --press-sm: inset 2px 2px 4px var(--sh-dark), inset -2px -2px 4px var(--sh-light);
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
+        html { background: var(--clay); scroll-behavior: smooth; }
         body {
-            background-color: var(--cyber-bg);
-            color: #fff;
-            font-family: 'Tomorrow', sans-serif;
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-            box-sizing: border-box;
+            background: var(--clay);
+            color: var(--ink);
+            font-family: 'Manrope', system-ui, sans-serif;
+            font-size: 15px;
+            line-height: 1.65;
+            min-height: 100vh;
+            padding: 28px 20px 64px;
+            -webkit-font-smoothing: antialiased;
+        }
+        ::selection { background: rgba(255, 42, 95, 0.22); color: var(--ink); }
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: var(--clay); }
+        ::-webkit-scrollbar-thumb { background: #D3C9CE; border-radius: 9999px; border: 3px solid var(--clay); }
+        a { color: var(--accent-ink); text-underline-offset: 3px; }
+        a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+
+        .icon {
+            font-family: 'Material Symbols Rounded';
+            font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal;
+            text-transform: none; white-space: nowrap; direction: ltr;
+            display: inline-block; vertical-align: middle;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+            -webkit-font-feature-settings: 'liga';
         }
 
-        .container {
-            max-width: 900px;
-            width: 100%;
-            margin: 0 auto;
-            border: 1px solid var(--cyber-cyan);
-            padding: 5% 10%;
-            background: rgba(0, 240, 255, 0.02);
-            clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);
-            box-sizing: border-box;
+        .page { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+
+        /* Top bar */
+        .topbar {
+            position: sticky; top: 16px; z-index: 10;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 10px 12px 10px 10px;
+            background: var(--clay);
+            border-radius: 9999px;
+            box-shadow: var(--raise);
+        }
+        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+        .mark {
+            width: 40px; height: 40px; border-radius: 9999px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--clay); box-shadow: var(--press-sm);
+            color: var(--accent-ink);
+        }
+        .mark svg { width: 20px; height: 20px; }
+        .brand-name { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+        .brand-name span { color: var(--ink-2); font-weight: 700; }
+        .well {
+            padding: 5px 12px; border-radius: 9999px;
+            background: var(--clay); box-shadow: var(--press-sm);
+            font-size: 12px; font-weight: 800; color: var(--ink-2);
+            font-variant-numeric: tabular-nums;
         }
 
-        header {
-            border-bottom: 2px solid var(--cyber-cyan);
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            gap: 10px;
+        /* Jump links */
+        .jump { display: flex; flex-wrap: wrap; gap: 10px; }
+        .jump a {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 14px; border-radius: 9999px;
+            background: var(--clay); box-shadow: var(--raise-sm);
+            color: var(--ink-2); font-size: 13px; font-weight: 700; text-decoration: none;
+            transition: box-shadow 0.25s var(--ease), color 0.2s;
+        }
+        .jump a:hover { color: var(--ink); }
+        .jump a:active { box-shadow: var(--press-sm); }
+        .jump .icon { font-size: 18px; }
+
+        /* Intro */
+        .intro h1 { font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.025em; text-wrap: balance; }
+        .intro p { margin-top: 12px; color: var(--ink-2); font-size: 16px; max-width: 60ch; }
+
+        /* Sections */
+        .slab {
+            background: var(--clay);
+            border-radius: 24px;
+            box-shadow: var(--raise-lg);
+            padding: 28px;
+            scroll-margin-top: 96px;
+        }
+        .slab-head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+        .slab-icon {
+            width: 44px; height: 44px; border-radius: 14px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--clay); box-shadow: var(--press);
+            color: var(--accent-ink);
+        }
+        .slab-icon .icon { font-size: 22px; font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+        h2 { font-size: 21px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.25; }
+        .slab > p { color: var(--ink-2); max-width: 65ch; }
+        .slab > p + p { margin-top: 10px; }
+
+        .facts { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+        .facts li { display: grid; grid-template-columns: 148px 1fr; gap: 16px; align-items: baseline; }
+        .facts dt, .facts .k { font-size: 13px; font-weight: 800; color: var(--ink); }
+        .facts .v { color: var(--ink-2); max-width: 60ch; }
+        .facts strong, .slab p strong { color: var(--ink); font-weight: 700; }
+
+        .note {
+            margin-top: 20px; padding: 14px 16px;
+            border-radius: 16px; background: var(--clay); box-shadow: var(--press);
+            display: flex; gap: 12px; align-items: flex-start;
+            color: var(--ink-2); font-size: 14px;
+        }
+        .note .icon { color: var(--run); font-size: 20px; margin-top: 1px; font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+
+        /* Shortcuts */
+        .keys { display: flex; flex-direction: column; gap: 16px; margin-top: 4px; }
+        .keyrow { display: grid; grid-template-columns: 128px 1fr; gap: 16px; align-items: center; }
+        .caps { display: flex; gap: 8px; }
+        kbd {
+            min-width: 40px; height: 40px; padding: 0 12px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 12px; background: var(--clay); box-shadow: var(--raise-sm);
+            font-family: inherit; font-size: 13px; font-weight: 800; color: var(--ink);
+        }
+        kbd.wide { min-width: 84px; }
+        .keyrow .v { color: var(--ink-2); }
+        .keyrow .v strong { color: var(--ink); font-weight: 700; }
+
+        /* Footer */
+        .credits {
+            display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+            padding: 20px 24px; border-radius: 24px; background: var(--clay); box-shadow: var(--press);
+        }
+        .credits .who { font-size: 14px; color: var(--ink-2); }
+        .credits .who strong { color: var(--ink); font-weight: 800; }
+        .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            height: 42px; padding: 0 18px; border-radius: 9999px;
+            background: var(--clay); box-shadow: var(--raise-sm);
+            color: var(--ink); font-size: 13px; font-weight: 800; text-decoration: none;
+            transition: box-shadow 0.25s var(--ease), transform 0.2s var(--ease);
+        }
+        .btn:active { box-shadow: var(--press-sm); transform: scale(0.98); }
+        .btn .icon { font-size: 18px; color: var(--accent-ink); }
+        .btn-fill { background: #C8174A linear-gradient(135deg, #C8174A, #B83D0A); color: #fff; box-shadow: 4px 4px 10px rgba(200, 23, 74, 0.3), -4px -4px 10px var(--sh-light); }
+        .btn-fill .icon { color: #fff; }
+
+        /* ── Live demos (guide-demo.js): a working popup replica on a loop ── */
+        .demo { margin: 22px 0 4px; }
+        .demo-stage {
+            position: relative; overflow: hidden;
+            display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: stretch;
+            padding: 22px; border-radius: 20px;
+            background: var(--clay); box-shadow: var(--press);
+        }
+        .demo-stage .icon { font-size: 16px; }
+
+        .m-pop {
+            width: 100%; align-self: start;
+            border-radius: 18px; background: var(--clay); box-shadow: var(--raise);
+            font-size: 12px; line-height: 1.3; color: var(--ink);
+        }
+        .m-head { display: flex; align-items: center; gap: 10px; padding: 14px 14px 8px; }
+        .m-mark { width: 34px; height: 34px; border-radius: 9999px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: var(--raise-sm); color: var(--ink-3); transition: color .3s; }
+        .m-mark.on { color: var(--accent-ink); }
+        .m-mark svg { width: 17px; height: 17px; }
+        .m-id { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+        .m-id b { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; }
+        .m-status { display: flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; color: var(--ink-2); white-space: nowrap; }
+        .m-status i { width: 6px; height: 6px; border-radius: 9999px; background: var(--ink-3); flex-shrink: 0; }
+        .m-status[data-tone="run"] { color: var(--run); } .m-status[data-tone="run"] i { background: var(--run); }
+        .m-status[data-tone="hold"] { color: #8F4C00; } .m-status[data-tone="hold"] i { background: #8F4C00; }
+        .m-status[data-tone="idle"] i { background: var(--ink-2); }
+        .m-hub { width: 28px; height: 28px; border-radius: 9999px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: var(--raise-sm); color: var(--ink-2); }
+
+        .m-switch { position: relative; width: 40px; height: 23px; border-radius: 9999px; flex-shrink: 0; box-shadow: var(--press-sm); }
+        .m-switch span { position: absolute; top: 4px; left: 4px; width: 15px; height: 15px; border-radius: 9999px; background: var(--clay); box-shadow: 2px 2px 4px var(--sh-dark), -1px -1px 3px var(--sh-light); transition: transform .3s var(--ease), background .25s; }
+        .m-switch.on span { transform: translateX(17px); background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 2px 2px 5px rgba(200, 23, 74, .35), -1px -1px 3px var(--sh-light); }
+
+        .m-tabs { display: flex; gap: 5px; margin: 6px 14px 0; padding: 5px; border-radius: 9999px; box-shadow: var(--press-sm); }
+        .m-seg {
+            position: relative; flex: 1 1 0; height: 34px; border-radius: 9999px;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            font-size: 12px; font-weight: 700; color: var(--ink-2); box-shadow: var(--raise-sm);
+            transition: box-shadow .25s var(--ease), color .2s;
+        }
+        .m-seg.sel { color: var(--accent-ink); box-shadow: var(--press-sm); animation: sink-sm .42s var(--ease); }
+        .m-seg.sel .icon { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+        .m-seg-sm { height: 27px; font-size: 11px; }
+        .m-live { position: absolute; top: 5px; right: 9px; width: 6px; height: 6px; border-radius: 9999px; background: var(--run); opacity: 0; transition: opacity .3s; }
+        .m-seg.live .m-live { opacity: 1; }
+
+        .m-panels { padding: 14px 14px 0; }
+        .m-panel {
+            display: none; flex-direction: column; gap: 14px;
+            padding: 14px; border-radius: 16px; box-shadow: var(--raise);
+        }
+        .m-panel.show { display: flex; }
+        .m-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .m-row-t { display: flex; flex-direction: column; gap: 1px; }
+        .m-row-t b { font-size: 13px; font-weight: 800; }
+        .m-row-t small { font-size: 10.5px; font-weight: 600; color: var(--ink-2); }
+        .m-segs { display: flex; gap: 7px; }
+        .m-slider { display: flex; flex-direction: column; gap: 9px; }
+        .m-sl-head { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--ink-2); }
+        .m-well { display: inline-flex; align-items: baseline; gap: 3px; min-width: 56px; justify-content: flex-end; padding: 3px 9px; border-radius: 9999px; box-shadow: var(--press-sm); font-size: 12px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+        .m-well small { font-size: 9.5px; font-weight: 700; color: var(--ink-2); }
+        .m-range { position: relative; display: block; height: 9px; border-radius: 9999px; box-shadow: var(--press-sm); background: linear-gradient(to right, var(--accent) 0, var(--accent) var(--pct, 0%), transparent var(--pct, 0%)); }
+        .m-thumb { position: absolute; top: 50%; left: var(--pct, 0%); width: 20px; height: 20px; border-radius: 9999px; transform: translate(-50%, -50%); background: radial-gradient(circle, var(--accent) 0 3px, var(--clay) 3.5px); box-shadow: 3px 3px 6px var(--sh-dark), -2px -2px 5px var(--sh-light); }
+        .m-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .m-key { height: 50px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10.5px; font-weight: 700; color: var(--ink-2); box-shadow: var(--raise-sm); transition: box-shadow .25s var(--ease), color .2s; }
+        .m-key.sel { color: var(--accent-ink); box-shadow: var(--press); animation: sink .48s var(--ease); }
+        .m-key.sel .icon { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+
+        .m-transport { display: flex; align-items: center; justify-content: center; gap: 24px; padding: 16px 14px 16px; }
+        .m-btn { width: 38px; height: 38px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; box-shadow: var(--raise-sm); color: var(--ink-2); }
+        .m-btn .icon { font-size: 20px; }
+        .m-dome { width: 54px; height: 54px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; box-shadow: var(--raise); color: var(--ink-2); transition: box-shadow .3s var(--ease), color .2s; }
+        .m-dome .icon { font-size: 26px; font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+        .m-dome[data-state="running"] { box-shadow: var(--press); color: var(--accent-ink); animation: sink .52s var(--ease); }
+        .m-dome[data-state="paused"] { background: linear-gradient(135deg, #D81B50, #D9530A); color: #fff; box-shadow: 4px 4px 10px rgba(200, 23, 74, .32), -4px -4px 10px var(--sh-light); }
+
+        /* Preview of the page the mode acts on */
+        .fx { position: relative; overflow: hidden; min-height: 240px; border-radius: 16px; background: #F7F3F5; box-shadow: var(--raise); }
+        .fx-tag { position: absolute; z-index: 2; top: 10px; left: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; background: var(--clay); box-shadow: var(--raise-sm); font-size: 10.5px; font-weight: 800; color: var(--ink-2); }
+        .fx-tag::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: var(--ink-3); transition: background .3s; }
+        .fx.live .fx-tag::before { background: var(--run); }
+        .fx-page { position: absolute; inset: 0 0 auto 0; will-change: transform; }
+        .fx-copy { display: flow-root; padding: 44px 18px 6px; }
+        .fx-copy > span { display: block; border-radius: 9999px; margin-bottom: 9px; }
+        .fx-h { height: 13px; width: 58%; background: #CDBFC6; margin-bottom: 14px !important; }
+        .fx-l { height: 7px; background: #E3DADF; }
+        .fx-l.s { width: 62%; margin-bottom: 16px !important; }
+        .fx-img { height: 84px; border-radius: 12px !important; margin-bottom: 16px !important; }
+        .fx-img.a { background: linear-gradient(135deg, #F4C3D1, #F8D9BC); }
+        .fx-img.b { background: linear-gradient(135deg, #D2C6E8, #C2DCE0); }
+
+        .fx-reader { display: grid; place-items: center; padding: 40px 0 36px; }
+        .fx-art { position: relative; width: min(62%, 190px); aspect-ratio: 3 / 4; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(150deg, #F08AA6, #F7B98A); transition: background .35s; }
+        .fx-art[data-page="2"] { background: linear-gradient(150deg, #9F8FD8, #8CC3CF); }
+        .fx-art[data-page="3"] { background: linear-gradient(150deg, #E7A15F, #E0738F); }
+        .fx-art-n { font-size: 48px; font-weight: 800; color: rgba(255, 255, 255, .9); }
+        .fx-ring { position: absolute; top: 50%; width: 32px; height: 32px; border-radius: 9999px; border: 3px solid var(--accent); box-shadow: 0 3px 8px rgba(59, 43, 53, .3), inset 0 0 0 2px rgba(255, 255, 255, .7); transform: translate(-50%, -50%); opacity: 0; transition: left .45s var(--ease), opacity .3s; }
+        .fx-ring.show { opacity: 1; }
+        .fx-ring.hit { animation: ring-hit .55s var(--ease); }
+        @keyframes ring-hit { 0% { transform: translate(-50%, -50%) scale(1); } 35% { transform: translate(-50%, -50%) scale(.62); } 100% { transform: translate(-50%, -50%) scale(1); } }
+        .fx-count { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); padding: 3px 10px; border-radius: 9999px; background: var(--clay); box-shadow: var(--press-sm); font-size: 10.5px; font-weight: 800; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+        .fx-ctrl { position: absolute; z-index: 2; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 12px; padding: 8px 12px 8px 8px; border-radius: 9999px; background: var(--clay); box-shadow: var(--raise); }
+        .fx-stick { position: relative; width: 50px; height: 50px; border-radius: 9999px; box-shadow: var(--press); }
+        .fx-knob { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; border-radius: 9999px; transform: translate(-50%, -50%); background: var(--clay); box-shadow: 2px 2px 5px var(--sh-dark), -2px -2px 4px var(--sh-light); }
+        .fx-a { width: 32px; height: 32px; border-radius: 9999px; display: grid; place-items: center; box-shadow: var(--raise-sm); font-size: 13px; font-weight: 800; color: var(--run); transition: box-shadow .15s; }
+        .fx-a.down { box-shadow: var(--press-sm); }
+        .fx-flash { position: absolute; z-index: 1; left: 50%; top: 42%; width: 36px; height: 36px; border-radius: 9999px; border: 3px solid var(--accent); transform: translate(-50%, -50%); opacity: 0; }
+        .fx-flash.hit { animation: flash .7s var(--ease); }
+        @keyframes flash { 0% { opacity: 1; transform: translate(-50%, -50%) scale(.6); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.8); } }
+
+        /* Scripted cursor and the hover tip it reveals */
+        .demo-cursor { position: absolute; z-index: 6; top: 0; left: 0; margin: -2px 0 0 -4px; opacity: 0; pointer-events: none; transition: transform .7s var(--ease), opacity .3s; }
+        .demo-cursor.instant { transition: opacity .3s; }
+        .demo-cursor.show { opacity: 1; }
+        .demo-cursor svg { display: block; transform-origin: 4px 2px; transition: transform .12s; filter: drop-shadow(1px 2px 2px rgba(59, 43, 53, .25)); }
+        .demo-cursor.down svg { transform: scale(.84); }
+        .demo-ripple { position: absolute; left: -11px; top: -13px; width: 30px; height: 30px; border-radius: 9999px; border: 2px solid var(--accent); opacity: 0; }
+        .demo-cursor.down .demo-ripple { animation: flash .5s var(--ease); }
+        .demo-tip { position: absolute; z-index: 5; max-width: 190px; padding: 6px 10px; border-radius: 12px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 700; line-height: 1.35; box-shadow: 0 6px 14px rgba(59, 43, 53, .22); opacity: 0; pointer-events: none; transition: opacity .15s; }
+        .demo-tip.show { opacity: 1; }
+
+        .demo-foot { display: flex; align-items: flex-start; gap: 14px; margin-top: 16px; }
+        .demo-steps { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+        .demo-steps li { display: inline-flex; align-items: center; gap: 7px; padding: 4px 12px 4px 4px; border-radius: 9999px; box-shadow: var(--raise-sm); font-size: 12px; font-weight: 700; color: var(--ink-2); transition: box-shadow .25s var(--ease), color .2s; }
+        .demo-steps .n { width: 22px; height: 22px; border-radius: 9999px; display: grid; place-items: center; box-shadow: var(--press-sm); font-size: 11px; font-weight: 800; }
+        .demo-steps li.done { color: var(--ink); }
+        .demo-steps li.done .n { color: var(--run); }
+        .demo-steps li.now { color: var(--accent-ink); box-shadow: var(--press-sm); animation: sink-sm .42s var(--ease); }
+        .demo-steps li.now .n { background: var(--accent-ink); color: #fff; box-shadow: none; }
+        .demo-toggle { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 10px; border: 0; border-radius: 9999px; background: var(--clay); box-shadow: var(--raise-sm); font: 800 12px 'Manrope', system-ui, sans-serif; color: var(--ink-2); cursor: pointer; transition: box-shadow .25s var(--ease), color .2s; }
+        .demo-toggle:hover { color: var(--ink); }
+        .demo-toggle[aria-pressed="true"] { box-shadow: var(--press-sm); color: var(--accent-ink); }
+        .demo-toggle .icon { font-size: 18px; font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+
+        @keyframes sink {
+            0% { box-shadow: var(--raise-sm); }
+            55% { box-shadow: inset 5px 5px 11px var(--sh-dark), inset -4px -4px 9px var(--sh-light); }
+            100% { box-shadow: var(--press); }
+        }
+        @keyframes sink-sm {
+            0% { box-shadow: var(--raise-sm); }
+            55% { box-shadow: inset 3px 3px 7px var(--sh-dark), inset -3px -3px 6px var(--sh-light); }
+            100% { box-shadow: var(--press-sm); }
         }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--cyber-cyan);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin: 0;
-            font-size: clamp(1.2rem, 4vw, 1.8rem);
+        /* Windows High Contrast drops shadows, the only edges clay has */
+        @media (forced-colors: active) {
+            .topbar, .slab, .note, .credits, .jump a, kbd, .btn, .demo-stage, .m-pop, .m-panel, .fx,
+            .m-seg, .m-key, .m-btn, .m-dome, .m-switch, .demo-steps li, .demo-toggle { outline: 1px solid CanvasText; outline-offset: -1px; }
+            .m-seg.sel, .m-key.sel, .demo-steps li.now { outline: 3px solid Highlight; outline-offset: -3px; }
         }
 
-        .version {
-            color: var(--cyber-text-dim);
-            font-weight: bold;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
         }
 
-        h2 {
-            color: var(--cyber-yellow);
-            text-transform: uppercase;
-            font-size: 1.1rem;
-            margin-top: 40px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        @media (max-width: 680px) {
+            .demo-stage { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 14px; gap: 16px; }
+            .m-pop { max-width: 300px; justify-self: center; }
+            .fx { min-height: 190px; }
+            .demo-foot { flex-direction: column; }
         }
 
-        h2::before {
-            content: ">>";
-            color: var(--cyber-cyan);
-        }
-
-        h3 {
-            color: var(--cyber-cyan);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            margin-top: 25px;
-            border-left: 3px solid var(--cyber-cyan);
-            padding-left: 10px;
-        }
-
-        p {
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-cols: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .card {
-            background: var(--cyber-surface);
-            border: 1px solid var(--cyber-border);
-            padding: 20px;
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            border-color: var(--cyber-cyan);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
-        }
-
-        .mode-badge {
-            display: inline-block;
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--cyber-cyan);
-            padding: 2px 10px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            border: 1px solid var(--cyber-cyan);
-        }
-
-        .key-list {
-            list-style: none;
-            padding: 0;
-            margin-top: 15px;
-        }
-
-        .key-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            flex-wrap: wrap;
-        }
-
-        .key {
-            background: var(--cyber-cyan);
-            color: #000;
-            padding: 2px 8px;
-            font-weight: 900;
-            border-radius: 3px;
-            min-width: 60px;
-            text-align: center;
-            font-size: 0.75rem;
-        }
-
-        .footer {
-            margin-top: 60px;
-            text-align: center;
-            font-size: 0.7rem;
-            color: var(--cyber-text-dim);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-        }
-
-        .scanlines::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
-            opacity: 0.05;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-                clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-            }
-            .grid { grid-template-cols: 1fr; }
-            header { flex-direction: column; align-items: center; text-align: center; }
+        @media (max-width: 560px) {
+            body { padding: 16px 16px 48px; font-size: 14px; }
+            .page { gap: 22px; }
+            .intro h1 { font-size: 27px; }
+            .slab { padding: 22px 18px; border-radius: 20px; }
+            .facts li, .keyrow { grid-template-columns: 1fr; gap: 4px; }
+            .keyrow { gap: 10px; }
+            .credits { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
-<body class="scanlines">
-    <div class="container">
-        <header>
-            <h1>ScrollSync</h1>
-            <span class="version">CORE_V1.0.0</span>
-        </header>
-        
-        <p>System established. ScrollSync is a precision automated navigation suite designed for deep-data immersion and accessibility. Follow the protocols below to calibrate your interface.</p>
+<body>
+<div class="page">
 
-        <h2>Section 01 // Core Initialization</h2>
-        <div class="grid">
-            <div class="card">
-                <div class="mode-badge">Global State</div>
-                <p>The <strong>Power Toggle</strong> in the header links the extension to the current tab. Without this link, all automated protocols remain offline.</p>
-                <p>Settings are <strong>Tab-Specific</strong> and persist across page loads until the tab is closed.</p>
-            </div>
-            <div class="card">
-                <div class="mode-badge">Execution Control</div>
-                <p>Use the <strong>Core Halt (Pause)</strong> button in the footer to temporarily suspend active movements. Essential for static data analysis.</p>
-            </div>
+    <header class="topbar">
+        <a class="brand" href="#top" id="top">
+            <span class="mark" aria-hidden="true">
+                <svg viewBox="0 0 1731.6 1731.6" fill="url(#ss-mark)"><defs><linearGradient id="ss-mark" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1731.6" y2="1731.6"><stop offset="0" stop-color="#E8194F"/><stop offset="1" stop-color="#EE5F12"/></linearGradient></defs><polygon points="865.9 1052.3 1137.6 1459.9 865.9 1731.6 594.2 1459.9 865.9 1052.3"/><polygon points="1386.6 1210.9 1258.4 1339 865.9 749.9 473.2 1339 345.1 1210.9 865.9 429.7 1386.6 1210.9"/><polygon points="1731.6 865.8 1507.5 1090 865.9 127.3 224.2 1090 0 865.8 865.9 0 1731.6 865.8"/></svg>
+            </span>
+            <span class="brand-name">ScrollSync <span>Guide</span></span>
+        </a>
+        <span class="well" data-version="v">v1.1.0</span>
+    </header>
+
+    <section class="intro">
+        <h1>Let the page move while your hands rest.</h1>
+        <p>ScrollSync scrolls at a steady speed, clicks through galleries on a timer, or hands the page to a gamepad. Set it up once in the popup, then lean back.</p>
+    </section>
+
+    <nav class="jump" aria-label="On this page">
+        <a href="#start"><span class="icon">power_settings_new</span>Getting started</a>
+        <a href="#scroll"><span class="icon">swap_vert</span>Auto-scroll</a>
+        <a href="#pulse"><span class="icon">touch_app</span>Auto Pulse</a>
+        <a href="#pad"><span class="icon">stadia_controller</span>Gamepad</a>
+        <a href="#hub"><span class="icon">radio_button_checked</span>On-page hub</a>
+        <a href="#keys"><span class="icon">keyboard</span>Shortcuts</a>
+    </nav>
+
+    <section class="slab" id="start">
+        <div class="slab-head">
+            <span class="slab-icon"><span class="icon">power_settings_new</span></span>
+            <h2>Getting started</h2>
         </div>
-
-        <h2>Section 02 // Navigation Modules</h2>
-        
-        <h3>Vert & Horz Glide</h3>
-        <p>Linear movement along axes. The system automatically finds the primary scrollable element on the page.</p>
-        <ul>
-            <li><strong>Velocity:</strong> Adjustable 0-500 PX/S.</li>
-            <li><strong>Detection:</strong> Prioritizes active scrolling elements.</li>
+        <ul class="facts">
+            <li><span class="k">Power switch</span><span class="v">The switch at the top right of the popup turns ScrollSync on for <strong>this tab only</strong>. Settings are remembered for the tab until you close it.</span></li>
+            <li><span class="k">One mode at a time</span><span class="v">Pick Scroll, Auto, or Pad. Turning a mode on switches the others off and turns ScrollSync on if it was off.</span></li>
+            <li><span class="k">Pause</span><span class="v">The large round button pauses and resumes. It sits pressed in while something is running and fills with colour when paused. Space does the same.</span></li>
+            <li><span class="k">Set up while off</span><span class="v">Every control works while ScrollSync is off, so you can prepare speed or timing before you start.</span></li>
+            <li><span class="k">Hover for help</span><span class="v">Rest the pointer on any button in the popup to see a short note on what it does.</span></li>
         </ul>
+        <div class="note"><span class="icon">info</span><span>ScrollSync can't run on browser pages such as <strong>chrome://</strong> or the new-tab page. Reload a tab that was open before you installed it.</span></div>
+    </section>
 
-        <h3>Smart Pulse (Auto-Clicker)</h3>
-        <p>Simulates human interaction for image galleries and readers.</p>
-        <ul>
-            <li><strong>Logic:</strong> Targets prominent <code>img</code> or <code>canvas</code> elements.</li>
-            <li><strong>Position:</strong> Choose <strong>LEFT</strong>, <strong>CENTER</strong>, or <strong>RIGHT</strong>.</li>
-            <li><strong>Interval:</strong> 1 to 60 seconds.</li>
+    <section class="slab" id="scroll">
+        <div class="slab-head">
+            <span class="slab-icon"><span class="icon">swap_vert</span></span>
+            <h2>Auto-scroll</h2>
+        </div>
+        <p>Moves the page at a steady speed. ScrollSync scrolls the page itself, or the largest scrolling panel on it. If nothing scrolls vertically it moves sideways instead, and it can drive smooth-scroll libraries that some sites use.</p>
+        <div class="demo" data-demo="scroll" data-steps='["Open the Scroll tab","Switch on Auto-scroll","Pick a direction","Set the speed","Pause any time"]'></div>
+        <ul class="facts">
+            <li><span class="k">Speed</span><span class="v">0 to 500 pixels per second.</span></li>
+            <li><span class="k">Direction</span><span class="v">Down or Up. The arrow buttons beside Pause, and the A and D keys, flip it too.</span></li>
         </ul>
+    </section>
 
-        <h2>Section 03 // Haptic Interface (Gamepad)</h2>
-        <p>Direct Gamepad API polling for console-like control.</p>
-        <div class="grid">
-            <div class="card">
-                <div class="mode-badge">Analog Mapping</div>
-                <p>Map <strong>LEFT/RIGHT</strong> sticks to control velocity based on tilt intensity.</p>
+    <section class="slab" id="pulse">
+        <div class="slab-head">
+            <span class="slab-icon"><span class="icon">touch_app</span></span>
+            <h2>Auto Pulse</h2>
+        </div>
+        <p>Clicks on a timer, made for image galleries, comic and manga readers, and carousels that turn the page when you click one side of the image.</p>
+        <div class="demo" data-demo="auto" data-steps='["Open the Auto tab","Switch on Auto Pulse","Choose where to click","Set the interval","Pause any time"]'></div>
+        <ul class="facts">
+            <li><span class="k">Target</span><span class="v">The largest image or canvas visible on screen. If there is none, the click lands on the page itself.</span></li>
+            <li><span class="k">Click point</span><span class="v">Left, Center, or Right, or any exact position from 0 to 100% across the image. A pink ring shows where the next click will land.</span></li>
+            <li><span class="k">Interval</span><span class="v">1 to 60 seconds between clicks.</span></li>
+        </ul>
+    </section>
+
+    <section class="slab" id="pad">
+        <div class="slab-head">
+            <span class="slab-icon"><span class="icon">stadia_controller</span></span>
+            <h2>Gamepad</h2>
+        </div>
+        <p>Connect a controller and press any button once so the browser can see it. The further you tilt the stick, the faster the page moves.</p>
+        <div class="demo" data-demo="pad" data-steps='["Open the Pad tab","Switch on Gamepad","Choose what the stick does","Tilt the stick to scroll","Press A to click"]'></div>
+        <ul class="facts">
+            <li><span class="k">Vertical / Sideways</span><span class="v">Choose which stick directions scroll the page. They can be on together.</span></li>
+            <li><span class="k">Click</span><span class="v"><strong>A</strong> or the <strong>right trigger</strong> clicks the current image. Pushing the stick fully left or right clicks its left or right side.</span></li>
+            <li><span class="k">Stick</span><span class="v">Use the left or right stick.</span></li>
+            <li><span class="k">Sensitivity</span><span class="v">1 to 50. Higher moves further for the same tilt.</span></li>
+        </ul>
+    </section>
+
+    <section class="slab" id="hub">
+        <div class="slab-head">
+            <span class="slab-icon"><span class="icon">radio_button_checked</span></span>
+            <h2>On-page hub</h2>
+        </div>
+        <p>A small round control that floats over the page. Turn it on with the hub button in the popup header, or right-click the page and choose <strong>Show Floating Controls</strong>.</p>
+        <ul class="facts">
+            <li><span class="k">Click</span><span class="v">Opens the full controls beside the page.</span></li>
+            <li><span class="k">Right-click</span><span class="v">Opens quick actions: pause, power, and controls.</span></li>
+            <li><span class="k">Drag</span><span class="v">Moves it anywhere on screen.</span></li>
+            <li><span class="k">Reading it</span><span class="v">Pressed in with a pink icon while running, raised with an amber pause icon when paused, raised and grey when off.</span></li>
+        </ul>
+    </section>
+
+    <section class="slab" id="keys">
+        <div class="slab-head">
+            <span class="slab-icon"><span class="icon">keyboard</span></span>
+            <h2>Keyboard shortcuts</h2>
+        </div>
+        <p>Shortcuts work while ScrollSync is on and you are not typing in a text field.</p>
+        <div class="keys" style="margin-top: 20px;">
+            <div class="keyrow">
+                <span class="caps"><kbd class="wide">Space</kbd></span>
+                <span class="v">Pause or resume.</span>
             </div>
-            <div class="card">
-                <div class="mode-badge">Trigger Actions</div>
-                <p><strong>A Button</strong> and <strong>Right Trigger</strong> are mapped to immediate Smart Click pulses.</p>
+            <div class="keyrow">
+                <span class="caps"><kbd>W</kbd><kbd>S</kbd></span>
+                <span class="v"><strong>Scroll:</strong> speed up or slow down by 5 px/s. <strong>Auto Pulse:</strong> click 1 second sooner or later.</span>
+            </div>
+            <div class="keyrow">
+                <span class="caps"><kbd>A</kbd><kbd>D</kbd></span>
+                <span class="v"><strong>Scroll:</strong> scroll up or down. <strong>Auto Pulse:</strong> move the click point to the left (10%) or right (90%).</span>
             </div>
         </div>
+    </section>
 
-        <h2>Section 04 // Shortcut Protocol</h2>
-        <div class="key-list">
-            <div class="key-item"><span class="key">SPACE</span> Toggle Core Halt (Pause/Resume)</div>
-            <div class="key-item"><span class="key">W / S</span> Adjust Active Velocity (Inc/Dec)</div>
-            <div class="key-item"><span class="key">A / D</span> Manual Jump (Navigate Back/Forward)</div>
+    <footer class="credits">
+        <span class="who">Designed and built by <strong>Naveen Akalanka</strong></span>
+        <div class="btns">
+            <a class="btn" href="https://github.com/NaveenAkalanka/ScrollSync" target="_blank" rel="noopener"><span class="icon">code</span>Source code</a>
+            <a class="btn btn-fill" href="https://www.buymeacoffee.com/naveenakalanka" target="_blank" rel="noopener"><span class="icon">local_cafe</span>Buy me a coffee</a>
         </div>
+    </footer>
 
-        <div class="footer">
-            <div style="margin-bottom: 10px; color: #fff; font-weight: bold; letter-spacing: 1px;">Designed & Developed by Naveen Akalanka</div>
-            <a href="https://www.buymeacoffee.com/naveenakalanka" target="_blank" style="color: var(--cyber-yellow); text-decoration: none; font-weight: 900; border: 1px solid var(--cyber-yellow); padding: 5px 15px; display: inline-block; margin-top: 5px;">☕ Support via Buy Me A Coffee</a>
-        </div>
-    </div>
+</div>
+<script src="version.js"></script>
+<script src="guide-demo.js"></script>
 </body>
 </html>

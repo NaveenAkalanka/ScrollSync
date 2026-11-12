@@ -1,148 +1,399 @@
-@import url('https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&family=Orbitron:wght@400;700;900&display=swap');
+/* Self-hosted faces (public/fonts): no third-party requests, works under strict CSP.
+   The icon font is a subset; add new glyph names to it when adding icons (see DESIGN.md). */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url('/fonts/manrope-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url('/fonts/material-symbols-rounded-subset.woff2') format('woff2');
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Clay tokens ─────────────────────────────────────────────
+   One ground, shaped by paired light/dark shadows. Depth is state:
+   engaged = pressed in (inset), idle/available = raised. */
 :root {
-  --cyber-yellow: #fcee0a;
-  --cyber-cyan: #00f0ff;
-  --cyber-red: #ff003c;
-  --cyber-bg: #050a0e;
+  --clay: #ECE7EA;
+  --clay-hi: #F7F3F5;
+  --ink: #3B2B35;
+  --ink-2: #6E5C66;
+  --ink-3: #9A8A93;
+  --accent: #FF2A5F;
+  --accent-2: #FF7B00;
+  --accent-ink: #C8174A;
+  --run: #0F7050;
+  --hold: #8F4C00;
+  --sh-dark: rgba(150, 118, 136, 0.42);
+  --sh-light: rgba(255, 255, 255, 0.95);
+
+  --raise-lg: 8px 8px 18px var(--sh-dark), -8px -8px 18px var(--sh-light);
+  --raise: 5px 5px 11px var(--sh-dark), -5px -5px 11px var(--sh-light);
+  --raise-sm: 3px 3px 6px var(--sh-dark), -3px -3px 6px var(--sh-light);
+  --press: inset 3px 3px 7px var(--sh-dark), inset -3px -3px 7px var(--sh-light);
+  --press-sm: inset 2px 2px 4px var(--sh-dark), inset -2px -2px 4px var(--sh-light);
+  --fill: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* When ScrollSync is off, accent fills fall back to clay ink so nothing
+   reads as running. Controls stay fully usable. */
+[data-power="off"] {
+  --fill: linear-gradient(135deg, #B7A8B0 0%, #A898A1 100%);
+  --accent: #A898A1;
+}
+
+/* Popup frame: a darker surround with the UI raised on a rounded pad inside it */
+:root { --surround: #DDD4D9; }
 
 @layer base {
   html {
-    background-color: var(--cyber-bg);
+    background-color: var(--clay);
+    -webkit-font-smoothing: antialiased;
   }
   body {
-    @apply font-['Tomorrow'] min-h-[500px];
-    background-color: var(--cyber-bg);
-    color: #fff;
+    font-family: 'Manrope', system-ui, sans-serif;
+    color: var(--ink);
+    background-color: var(--clay);
+  }
+  html[data-frame="pad"],
+  html[data-frame="pad"] body { background-color: var(--surround); }
+  /* margin auto centres the 320px UI where a browser shows the popup as a wide sheet (Android) */
+  html[data-frame="pad"] body { width: 320px; box-sizing: border-box; padding: 6px; margin: 0 auto; }
+  html[data-frame="flat"] body { width: 320px; margin: 0 auto; }
+  ::selection {
+    background: rgba(255, 42, 95, 0.22);
+    color: var(--ink);
   }
 }
 
-/* Custom Scrollbar (Cyberpunk Style) */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #0a1118; }
-::-webkit-scrollbar-thumb { background: var(--cyber-cyan); box-shadow: 0 0 5px var(--cyber-cyan); }
+@layer components {
+  .icon {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    direction: ltr;
+    display: inline-block;
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+  .icon-fill {
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  }
 
-/* Scanline Effect */
-.scanlines::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  background-size: 100% 2px, 3px 100%;
-  pointer-events: none;
-  z-index: 100;
-  opacity: 0.3;
+  .app-pad { width: 100%; }
+  html[data-frame="pad"] .app-pad {
+    border-radius: 16px;
+    box-shadow: 3px 4px 10px rgba(120, 88, 106, 0.38), -2px -2px 5px rgba(255, 255, 255, 0.55);
+  }
+
+  .raise-lg { background: var(--clay); box-shadow: var(--raise-lg); }
+  .raise { background: var(--clay); box-shadow: var(--raise); }
+  .raise-sm { background: var(--clay); box-shadow: var(--raise-sm); }
+  .press { background: var(--clay); box-shadow: var(--press); }
+  .press-sm { background: var(--clay); box-shadow: var(--press-sm); }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 3px;
+  }
+
+  /* Round clay button: raised at rest, pressed while held or engaged */
+  .clay-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--clay);
+    color: var(--ink-2);
+    box-shadow: var(--raise-sm);
+    transition: box-shadow 0.25s var(--ease), color 0.2s, transform 0.2s var(--ease);
+  }
+  .clay-btn:hover { color: var(--ink); }
+  .clay-btn:active { box-shadow: var(--press-sm); transform: scale(0.97); }
+  .clay-btn[aria-pressed="true"] { box-shadow: var(--press-sm); color: var(--accent-ink); animation: sink-sm 0.42s var(--ease); }
+  .clay-btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+
+  /* Switch: recessed track, raised knob that fills with the accent when on */
+  .clay-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .clay-switch input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .clay-switch .track {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: var(--clay);
+    box-shadow: var(--press-sm);
+  }
+  .clay-switch .knob {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: var(--clay);
+    box-shadow: 2px 2px 4px var(--sh-dark), -1px -1px 3px var(--sh-light);
+    transition: transform 0.3s var(--ease), background 0.25s;
+  }
+  .clay-switch input:checked ~ .knob {
+    transform: translateX(20px);
+    background: var(--fill);
+    box-shadow: 2px 2px 5px rgba(200, 23, 74, 0.35), -1px -1px 3px var(--sh-light);
+  }
+  [data-power="off"] .clay-switch input:checked ~ .knob {
+    box-shadow: 2px 2px 4px var(--sh-dark), -1px -1px 3px var(--sh-light);
+  }
+  .clay-switch input:focus-visible ~ .track {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 3px;
+  }
+
+  /* Segmented row: every choice stands proud; the chosen one is pressed in (depth is state) */
+  .tray {
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    border-radius: 9999px;
+    background: transparent;
+  }
+  .seg {
+    position: relative;
+    flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 34px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-2);
+    background: var(--clay);
+    box-shadow: var(--raise-sm);
+    transition: box-shadow 0.25s var(--ease), color 0.2s;
+  }
+  .seg:hover { color: var(--ink); }
+  .seg[aria-selected="true"],
+  .seg[aria-checked="true"] {
+    color: var(--accent-ink);
+    box-shadow: var(--press-sm);
+    animation: sink-sm 0.42s var(--ease);
+  }
+  .seg:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+  .seg-sm { height: 30px; font-size: 11px; }
+
+  /* Mode channel: the top-level choice sits in a shallow groove of its own and stands
+     taller than any choice row inside a panel, so it reads as the primary decision. */
+  .tray-channel {
+    gap: 6px;
+    padding: 6px;
+    border-radius: 9999px;
+    background: var(--clay);
+    box-shadow: var(--press-sm);
+  }
+  .tray-channel .seg { height: 40px; font-size: 13px; }
+
+  /* Option key: a physical key that stays pressed while its option is on */
+  .key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-2);
+    background: var(--clay);
+    box-shadow: var(--raise-sm);
+    transition: box-shadow 0.25s var(--ease), color 0.2s;
+  }
+  .key:hover { color: var(--ink); }
+  .key[aria-pressed="true"] { box-shadow: var(--press); color: var(--accent-ink); animation: sink 0.48s var(--ease); }
+  .key:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+
+  /* Value well: recessed numeric readout */
+  .well {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    min-width: 64px;
+    justify-content: flex-end;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: var(--clay);
+    box-shadow: var(--press-sm);
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .well small { font-size: 10px; font-weight: 700; color: var(--ink-2); }
+
+  /* Range: a groove with the accent pressed into it, raised clay knob */
+  .clay-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 9999px;
+    background:
+      linear-gradient(to right, var(--accent) 0, var(--accent) var(--pct, 0%), transparent var(--pct, 0%)),
+      var(--clay);
+    box-shadow: var(--press-sm);
+    outline: none;
+    cursor: pointer;
+  }
+  .clay-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, var(--accent) 0 3px, var(--clay) 3.5px);
+    box-shadow: 3px 3px 6px var(--sh-dark), -2px -2px 5px var(--sh-light);
+    transition: transform 0.2s var(--ease);
+  }
+  .clay-range:active::-webkit-slider-thumb { transform: scale(0.92); }
+  .clay-range::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 9999px;
+    background: radial-gradient(circle, var(--accent) 0 3px, var(--clay) 3.5px);
+    box-shadow: 3px 3px 6px var(--sh-dark), -2px -2px 5px var(--sh-light);
+  }
+  .clay-range:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 4px; }
+
+  /* Transport dome */
+  .dome {
+    width: 64px;
+    height: 64px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--clay);
+    color: var(--ink-2);
+    box-shadow: var(--raise);
+    transition: box-shadow 0.3s var(--ease), background 0.3s, color 0.2s, transform 0.2s var(--ease);
+  }
+  .dome:active { transform: scale(0.97); }
+  .dome[data-state="running"] { box-shadow: var(--press); color: var(--accent-ink); animation: sink 0.52s var(--ease); }
+  .dome[data-state="paused"] {
+    background: linear-gradient(135deg, #D81B50 0%, #D9530A 100%);
+    color: #fff;
+    box-shadow: 5px 5px 12px rgba(200, 23, 74, 0.32), -5px -5px 11px var(--sh-light);
+  }
+  .dome:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 4px; }
+
+  /* Hover tip: a short ink label that says what a control does.
+     data-tip-pos="above" for controls near the bottom edge; data-tip-align="start|end"
+     for controls near the side edges, so the tip never leaves the 320px popup. */
+  [data-tip] { position: relative; }
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    z-index: 50;
+    left: 50%;
+    top: calc(100% + 8px);
+    width: max-content;
+    max-width: 176px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: #fff;
+    font: 700 11px/1.35 'Manrope', system-ui, sans-serif;
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: none;
+    white-space: normal;
+    box-shadow: 0 6px 14px rgba(59, 43, 53, 0.22);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(var(--tip-x, -50%), var(--tip-y, -3px));
+    transition: opacity 0.12s, transform 0.18s var(--ease);
+  }
+  [data-tip-pos="above"]::after { top: auto; bottom: calc(100% + 8px); --tip-y: 3px; }
+  [data-tip-align="start"]::after { left: 0; --tip-x: 0; }
+  [data-tip-align="end"]::after { left: auto; right: 0; --tip-x: 0; }
+  /* Hover only where a real pointer can hover: on touch screens a tap would leave it stuck open */
+  @media (hover: hover) and (pointer: fine) {
+    [data-tip]:hover::after { opacity: 1; --tip-y: 0; transition-delay: 0.45s; }
+  }
+  [data-tip]:focus-visible::after,
+  [data-tip]:has(:focus-visible)::after {
+    opacity: 1;
+    --tip-y: 0;
+  }
+  [data-tip]:focus-visible::after,
+  [data-tip]:has(:focus-visible)::after { transition-delay: 0s; }
+  [data-tip]:active::after { opacity: 0; transition-delay: 0s; }
 }
 
-/* Cyber Button */
-.cyber-btn {
-  @apply relative overflow-hidden font-bold uppercase transition-all duration-200;
-  clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-  border: 1px solid var(--cyber-cyan);
-  background: rgba(0, 240, 255, 0.05);
-  color: var(--cyber-cyan);
+/* The press-in: an engaged control sinks past its resting depth, then settles.
+   This is the one authored motion; everything else is a plain transition. */
+@keyframes sink {
+  0%   { box-shadow: var(--raise-sm); }
+  55%  { box-shadow: inset 5px 5px 11px var(--sh-dark), inset -4px -4px 9px var(--sh-light); }
+  100% { box-shadow: var(--press); }
+}
+@keyframes sink-sm {
+  0%   { box-shadow: var(--raise-sm); }
+  55%  { box-shadow: inset 3px 3px 7px var(--sh-dark), inset -3px -3px 6px var(--sh-light); }
+  100% { box-shadow: var(--press-sm); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
 }
 
-.cyber-btn:hover {
-  background: var(--cyber-cyan);
-  color: #000;
-  box-shadow: 0 0 15px var(--cyber-cyan);
-}
-
-.cyber-btn.active {
-  background: var(--cyber-cyan);
-  color: #000;
-}
-
-/* Cyber Switch */
-.cyber-switch {
-  @apply relative inline-block w-10 h-5;
-}
-
-.cyber-switch input { @apply opacity-0 w-0 h-0; }
-
-.cyber-slider {
-  @apply absolute cursor-pointer inset-0 transition-all duration-300;
-  background: #111a24;
-  clip-path: polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%);
-  border: 1px solid #223447;
-}
-
-.cyber-slider:before {
-  @apply absolute content-[""] h-3 w-3 left-1 bottom-1 transition-all duration-300;
-  background: #445b74;
-  clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
-}
-
-input:checked + .cyber-slider {
-  border-color: var(--cyber-cyan);
-  box-shadow: 0 0 5px var(--cyber-cyan);
-}
-
-input:checked + .cyber-slider:before {
-  @apply translate-x-4;
-  background: var(--cyber-cyan);
-  box-shadow: 0 0 8px var(--cyber-cyan);
-}
-
-/* Cyber Tab */
-.cyber-tab {
-  @apply flex-1 flex flex-col items-center py-2 gap-1 text-[9px] font-bold uppercase transition-all duration-300 border-t-2 border-transparent;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.cyber-tab.active {
-  background: rgba(0, 240, 255, 0.1);
-  border-top-color: var(--cyber-cyan);
-  color: var(--cyber-cyan);
-  text-shadow: 0 0 5px var(--cyber-cyan);
-}
-
-/* Cyber Range */
-.cyber-range {
-  @apply w-full h-1 bg-[#111a24] appearance-none outline-none;
-}
-
-.cyber-range::-webkit-slider-thumb {
-  @apply appearance-none w-3 h-3 cursor-pointer transition-all duration-200;
-  background: var(--cyber-cyan);
-  clip-path: polygon(25% 0, 100% 0, 100% 75%, 75% 100%, 0 100%, 0 25%);
-  box-shadow: 0 0 10px var(--cyber-cyan);
-}
-
-.cyber-range::-webkit-slider-thumb:hover {
-  @apply scale-125;
-}
-
-/* Morphing Button (Cyber Style) */
-.morph-btn-cyber {
-  @apply w-12 h-12 flex items-center justify-center cursor-pointer transition-all duration-300;
-  background: var(--cyber-cyan);
-  clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-}
-
-.morph-btn-cyber:hover { @apply scale-110; }
-
-.morph-btn-cyber.is-paused {
-  background: var(--cyber-red);
-  box-shadow: 0 0 15px rgba(255, 0, 60, 0.5);
-}
-
-.morph-icon-cyber {
-  @apply w-5 h-5 bg-black transition-all duration-300;
-}
-
-.morph-icon-cyber.play {
-  clip-path: polygon(20% 0%, 20% 100%, 100% 50%);
-}
-
-.morph-icon-cyber.pause {
-  clip-path: polygon(0% 0%, 0% 100%, 35% 100%, 35% 0%, 65% 0%, 65% 100%, 100% 100%, 100% 0%);
+/* Windows High Contrast (forced colors) removes box-shadows, and shadows are the only edges
+   clay has. Give every surface a system-colour outline, and mark chosen controls with Highlight. */
+@media (forced-colors: active) {
+  .app-pad, .raise, .raise-sm, .raise-lg, .press, .press-sm, .tray-channel, .seg, .key, .well,
+  .clay-btn, .dome, .clay-range, .clay-switch .track {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  .seg[aria-selected="true"], .seg[aria-checked="true"], .key[aria-pressed="true"],
+  .clay-btn[aria-pressed="true"], .dome[data-state="running"] {
+    outline: 3px solid Highlight;
+    outline-offset: -3px;
+  }
+  .clay-range {
+    forced-color-adjust: none;
+    background: linear-gradient(to right, Highlight 0, Highlight var(--pct, 0%), Canvas var(--pct, 0%));
+  }
+  .clay-range::-webkit-slider-thumb { background: CanvasText; box-shadow: 0 0 0 2px Canvas; }
+  .clay-switch .knob { forced-color-adjust: none; background: CanvasText; }
+  .clay-switch input:checked ~ .knob { background: Highlight; }
+  [data-tip]::after { outline: 1px solid CanvasText; }
 }

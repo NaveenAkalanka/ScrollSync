@@ -7,28 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        anime: {
-          pink: '#ff4d85',
-          purple: '#7b61ff',
-          bg: '#fdf2f8',
-          card: '#ffffff',
-          inactive: '#cbd5e0',
-          border: '#f3e8ff'
-        }
+        clay: "#ECE7EA",
+        ink: "#3B2B35",
+        "ink-2": "#6E5C66",
+        "ink-3": "#9A8A93",
+        accent: "#FF2A5F",
+        "accent-ink": "#C8174A",
+        run: "#0F7050",
+        hold: "#8F4C00",
       },
-      borderRadius: {
-        'kawaii': '24px',
-        'soft': '16px'
+      fontFamily: {
+        body: ["Manrope", "system-ui", "sans-serif"],
       },
-      animation: {
-        'fade-in': 'fadeIn 0.3s ease-out'
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(5px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' }
-        }
-      }
     },
   },
   plugins: [],
